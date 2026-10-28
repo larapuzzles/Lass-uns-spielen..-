@@ -874,6 +874,18 @@
           statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
         }
 
+        // Hinweis im unteren Bereich:
+        const categoryName = getCategoryForIndex(targetPosition);
+        if (categoryName) {
+          cardTitle.textContent = "Bitte Karte ziehen";
+          cardSituation.textContent = `Die Spielfigur steht auf einem ${categoryConfig[categoryName].label}-Feld. Bitte die passende Karte aus dem Kartenstapel ziehen.`;
+          cardQuestion.textContent = "Klick auf „Karte ziehen“";
+          groupImpulses.innerHTML = "";
+          cardBadge.textContent = categoryConfig[categoryName].label;
+          cardBadge.style.background = categoryConfig[categoryName].soft;
+          cardBadge.style.color = categoryConfig[categoryName].color;
+        }
+
         renderBoard();
       }
 
@@ -891,15 +903,15 @@
         const player = getActivePlayer();
         if (!player) return;
 
-        const currentFieldCategory = getCategoryForIndex(player.position);
+        const categoryName = getCategoryForIndex(player.position);
 
-        if (!currentFieldCategory) {
+        if (!categoryName) {
           statusText.textContent = `${player.name} steht auf Start oder Ende. Dort gibt es keine Karten.`;
           resetCardPanel();
           return;
         }
 
-        drawCardForCategory(currentFieldCategory);
+        drawCardForCategory(categoryName);
       }
 
       function formatTime(ms) {
