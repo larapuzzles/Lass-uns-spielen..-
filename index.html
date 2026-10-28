@@ -151,8 +151,8 @@
       .board {
         position: relative;
         width: 100%;
-        height: 760px;
-        min-height: 760px;
+        height: 920px;
+        min-height: 920px;
         border-radius: 24px;
         overflow: hidden;
         background:
@@ -472,7 +472,7 @@
 
       @media (max-width: 1100px) {
         .board {
-          height: 700px;
+          height: 890px;
         }
         .tile {
           width: 100px;
@@ -728,6 +728,15 @@
       const startX = 60;
       const startY = 60;
 
+      function shuffle(array) {
+        const copy = [...array];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
       function getGridCoords(index) {
         const row = Math.floor(index / 4);
         const col = row % 2 === 0 ? index % 4 : 3 - (index % 4);
@@ -736,12 +745,12 @@
 
       function getTileColor(index) {
         const { row, col } = getGridCoords(index);
-        const colorName = rowPatterns[row][col];
-        if (colorName === "blue") return "#2f6fcb";
-        if (colorName === "yellow") return "#d9a92a";
-        if (colorName === "green") return "#2f9e6f";
-        if (colorName === "red") return "#d84d4d";
-        return "#ffffff";
+        return {
+          blue: "#2f6fcb",
+          yellow: "#d9a92a",
+          green: "#2f9e6f",
+          red: "#d84d4d"
+        }[rowPatterns[row][col]];
       }
 
       function getTilePosition(index) {
@@ -753,15 +762,6 @@
         const y = startY + row * (tileHeight + gapY);
 
         return { x, y };
-      }
-
-      function shuffle(array) {
-        const copy = [...array];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
       }
 
       let players = [];
@@ -875,6 +875,7 @@
             `;
           } else {
             tile.style.background = getTileColor(index);
+
             if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
               tile.classList.add("active");
             }
