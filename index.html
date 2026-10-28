@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Digitales Lernspielbrett</title>
+    <title>Management-Spielbrett</title>
     <style>
       :root {
-        --bg: #f4f7fb;
+        --bg: #edf2f7;
         --panel: #ffffff;
-        --border: #d8e0ec;
+        --panel-strong: #f6f9fc;
+        --border: #dfe8f2;
         --text: #1f2937;
-        --shadow: rgba(0, 0, 0, 0.08);
+        --muted: #667085;
+        --shadow: rgba(15, 23, 42, 0.09);
+        --board-bg: #eef3f8;
       }
 
       * {
@@ -22,173 +25,423 @@
         min-height: 100vh;
         display: grid;
         place-items: center;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #eaf3ff, #f5f8ff);
+        background: linear-gradient(135deg, #edf3fb, #f5f7fa);
         color: var(--text);
+        font-family: "Segoe UI", Arial, sans-serif;
       }
 
       .app {
+        width: min(92vw, 980px);
         background: var(--panel);
         border: 1px solid var(--border);
-        border-radius: 20px;
-        box-shadow: 0 18px 35px var(--shadow);
-        padding: 20px;
-        width: min(90vw, 720px);
+        border-radius: 28px;
+        box-shadow: 0 20px 45px var(--shadow);
+        padding: 24px;
       }
 
-      .header {
+      .topbar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: 1.5rem;
-      }
-
-      .legend {
-        display: flex;
-        gap: 10px;
+        gap: 16px;
+        margin-bottom: 22px;
         flex-wrap: wrap;
       }
 
-      .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.8rem;
-        background: #f3f6fb;
-        border: 1px solid #dfe7f2;
-        border-radius: 999px;
-        padding: 6px 10px;
+      .title-group h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 2vw, 2.1rem);
+        letter-spacing: 0.02em;
       }
 
-      .dot {
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        display: inline-block;
+      .subtitle {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .controls label {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      select,
+      button {
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        padding: 10px 14px;
+        background: #fff;
+        color: var(--text);
+        font-size: 0.95rem;
+      }
+
+      button {
+        background: linear-gradient(135deg, #1f4e79, #2d6fa3);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        box-shadow: 0 10px 20px rgba(31, 78, 121, 0.2);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 24px rgba(31, 78, 121, 0.24);
+      }
+
+      .statusbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        background: var(--panel-strong);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+      }
+
+      .status-text {
+        font-weight: 600;
+      }
+
+      .dice-display {
+        min-width: 130px;
+        text-align: center;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 8px 12px;
+        font-weight: 700;
+      }
+
+      .board-wrap {
+        background: var(--board-bg);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 18px;
       }
 
       .board {
         display: grid;
-        grid-template-columns: repeat(6, minmax(70px, 1fr));
-        gap: 10px;
-        background: #ebf0f7;
-        border-radius: 18px;
-        padding: 10px;
+        grid-template-columns: repeat(6, minmax(75px, 1fr));
+        gap: 12px;
       }
 
       .tile {
         position: relative;
         aspect-ratio: 1 / 1;
         border-radius: 16px;
-        border: 2px solid rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.75);
         display: flex;
-        justify-content: center;
         align-items: center;
-        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-        user-select: none;
+        justify-content: center;
+        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.04);
         overflow: hidden;
+        padding: 4px;
+        transition: transform 0.14s ease, box-shadow 0.14s ease;
       }
 
       .tile:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-      }
-
-      .tile span {
-        font-weight: 700;
-        font-size: clamp(0.65rem, 1vw, 0.95rem);
-        color: rgba(0, 0, 0, 0.7);
-        text-align: center;
-        padding: 6px;
-      }
-
-      .tile .marker {
-        position: absolute;
-        bottom: 7px;
-        right: 7px;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.8);
-        border: 2px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
       }
 
       .tile.active {
-        outline: 4px solid #111827;
-        outline-offset: -4px;
+        outline: 3px solid rgba(17, 24, 39, 0.7);
+        outline-offset: -3px;
+      }
+
+      .tile-content {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 6px;
+        font-weight: 700;
+        color: rgba(17, 24, 39, 0.72);
+        position: relative;
+      }
+
+      .tile-content small {
+        font-size: 0.58rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .tile-content strong {
+        font-size: clamp(0.56rem, 1vw, 0.78rem);
+        line-height: 1.1;
+      }
+
+      .tokens {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .token {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.95);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.62rem;
+        color: white;
+        font-weight: 700;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #f7f9fc;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .legend-mark {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      @media (max-width: 720px) {
+        .app {
+          padding: 18px;
+        }
+
+        .board {
+          grid-template-columns: repeat(4, minmax(70px, 1fr));
+        }
       }
     </style>
   </head>
   <body>
     <div class="app">
-      <div class="header">
-        <h1>Spielbrett</h1>
-        <div class="legend" id="legend"></div>
+      <div class="topbar">
+        <div class="title-group">
+          <h1>Leadership Board</h1>
+          <div class="subtitle">Strategie- und Teamspiel für Führungskräfte</div>
+        </div>
+
+        <div class="controls">
+          <label for="playerCount">Teilnehmer</label>
+          <select id="playerCount">
+            <option value="2">2 Personen</option>
+            <option value="4" selected>4 Personen</option>
+            <option value="6">6 Personen</option>
+          </select>
+          <button id="rollButton" type="button">Würfeln</button>
+        </div>
       </div>
 
-      <div class="board" id="board"></div>
+      <div class="statusbar">
+        <div class="status-text" id="statusText">Spieler 1 ist am Zug</div>
+        <div class="dice-display" id="diceDisplay">Würfel: –</div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+        <div class="legend" id="legend"></div>
+      </div>
     </div>
 
     <script>
       const board = document.getElementById("board");
       const legend = document.getElementById("legend");
+      const statusText = document.getElementById("statusText");
+      const diceDisplay = document.getElementById("diceDisplay");
+      const playerCountSelect = document.getElementById("playerCount");
+      const rollButton = document.getElementById("rollButton");
 
       const fieldTypes = [
-        { name: "Start", color: "#f9d75d", label: "Start" },
-        { name: "Mathe", color: "#6ec6ff", label: "1+1" },
-        { name: "Sprache", color: "#ff9b8a", label: "Wort" },
-        { name: "Natur", color: "#7adf9c", label: "Pflanze" },
-        { name: "Technik", color: "#b38bff", label: "Code" },
-        { name: "Kreativ", color: "#ffbf69", label: "Kunst" },
-        { name: "Bonus", color: "#9fe4d8", label: "Bonus" },
-        { name: "Ziel", color: "#f7a8d8", label: "Ziel" }
+        { name: "Strategie", short: "Strategie", color: "#dfeaf8" },
+        { name: "Team", short: "Team", color: "#d9f1e9" },
+        { name: "KPI", short: "KPI", color: "#fbe7c7" },
+        { name: "Innovation", short: "Innov.", color: "#f7d9e5" },
+        { name: "Risiko", short: "Risiko", color: "#e7dffc" },
+        { name: "Ziel", short: "Ziel", color: "#dce9ff" },
+        { name: "Budget", short: "Budget", color: "#fde3c6" },
+        { name: "Vertrieb", short: "Vertrieb", color: "#dff0d8" }
       ];
 
-      // Legende erzeugen
-      fieldTypes.forEach(type => {
-        const item = document.createElement("div");
-        item.className = "legend-item";
-        item.innerHTML = `
-          <span class="dot" style="background:${type.color}"></span>
-          <span>${type.name}</span>
-        `;
-        legend.appendChild(item);
-      });
+      const playerColors = [
+        "#2d6cdf",
+        "#2db38f",
+        "#f29c3d",
+        "#a96af4",
+        "#e85b7d",
+        "#5d7c8b"
+      ];
 
-      // 6x6 Spielbrett erstellen
-      const size = 6;
-      let currentIndex = 0;
+      const track = [
+        0, 1, 2, 3, 9, 15, 21, 27, 28, 22, 16, 10,
+        4, 5, 11, 17, 23, 29, 35, 34, 33, 32, 26, 20,
+        14, 8, 7, 13, 19, 25, 31, 30, 24, 18, 12, 6
+      ];
 
-      for (let i = 0; i < size * size; i++) {
-        const tile = document.createElement("div");
-        const type = fieldTypes[i % fieldTypes.length];
+      let players = [];
+      let currentPlayerIndex = 0;
+      let currentDice = null;
 
-        tile.className = "tile";
-        tile.style.background = type.color;
-        tile.innerHTML = `
-          <span>${type.label}</span>
-          <div class="marker"></div>
-        `;
+      function getFieldForTrackIndex(index) {
+        const type = fieldTypes[index % fieldTypes.length];
+        const label = type.short;
 
-        // Aktives Feld markiert
-        if (i === currentIndex) {
-          tile.classList.add("active");
+        if (index === 0) return { name: "Start", short: "Start", color: "#eef3f9" };
+        if (index === track.length - 1) return { name: "Ziel", short: "Ziel", color: "#e7f2d0" };
+
+        return { ...type, short: label };
+      }
+
+      function createLegend() {
+        legend.innerHTML = "";
+        fieldTypes.forEach((type) => {
+          const item = document.createElement("div");
+          item.className = "legend-item";
+          item.innerHTML = `
+            <span class="legend-mark" style="background:${type.color}"></span>
+            <span>${type.name}</span>
+          `;
+          legend.appendChild(item);
+        });
+      }
+
+      function setupPlayers(count) {
+        players = Array.from({ length: count }, (_, i) => ({
+          id: i + 1,
+          name: `Spieler ${i + 1}`,
+          color: playerColors[i % playerColors.length],
+          position: 0
+        }));
+        currentPlayerIndex = 0;
+        currentDice = null;
+        statusText.textContent = `${players[0].name} ist am Zug`;
+        diceDisplay.textContent = "Würfel: –";
+        renderBoard();
+      }
+
+      function renderBoard() {
+        board.innerHTML = "";
+
+        track.forEach((gridIndex, pathIndex) => {
+          const field = getFieldForTrackIndex(pathIndex);
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.style.background = field.color;
+
+          if (pathIndex === players[currentPlayerIndex]?.position) {
+            tile.classList.add("active");
+          }
+
+          const tokens = players
+            .filter((player) => player.position === pathIndex)
+            .map((player, index) => {
+              const offset = players.filter((p) => p.position === pathIndex).length > 1 ? index : 0;
+              const xOffset = players.filter((p) => p.position === pathIndex).length === 1 ? 0 : offset * 12 - 12;
+              return `
+                <div
+                  class="token"
+                  style="background:${player.color}; left: 50%; transform: translateX(${xOffset}px); bottom: 10px;"
+                >
+                  ${player.id}
+                </div>
+              `;
+            })
+            .join("");
+
+          tile.innerHTML = `
+            <div class="tile-content">
+              <small>${field.name === "Start" || field.name === "Ziel" ? "" : "Feld"}</small>
+              <strong>${field.short}</strong>
+            </div>
+            <div class="tokens">${tokens}</div>
+          `;
+
+          tile.addEventListener("click", () => {
+            const selectedPlayer = players[currentPlayerIndex];
+            if (!selectedPlayer) return;
+            const clickedPosition = pathIndex;
+            if (clickedPosition <= selectedPlayer.position) {
+              statusText.textContent = `${selectedPlayer.name} hat dieses Feld bereits erreicht`;
+            } else {
+              statusText.textContent = `${selectedPlayer.name} hat ${clickedPosition - selectedPlayer.position} Schritte gewählt`;
+            }
+          });
+
+          board.appendChild(tile);
+        });
+      }
+
+      function advanceCurrentPlayer() {
+        const player = players[currentPlayerIndex];
+        if (!player) return;
+
+        const steps = Math.floor(Math.random() * 6) + 1;
+        currentDice = steps;
+
+        const nextPosition = Math.min(player.position + steps, track.length - 1);
+        player.position = nextPosition;
+
+        diceDisplay.textContent = `Würfel: ${steps}`;
+
+        // Wenn am Ende angekommen
+        if (nextPosition >= track.length - 1) {
+          statusText.textContent = `${player.name} hat das Ziel erreicht!`;
+        } else {
+          statusText.textContent = `${player.name} bewegt sich um ${steps} Felder`;
         }
 
-        tile.addEventListener("click", () => {
-          document.querySelectorAll(".tile").forEach(cell => cell.classList.remove("active"));
-          tile.classList.add("active");
-          currentIndex = i;
-        });
+        renderBoard();
 
-        board.appendChild(tile);
+        // Nächsten Spieler aktivieren
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        statusText.textContent = `${players[currentPlayerIndex].name} ist am Zug`;
       }
+
+      playerCountSelect.addEventListener("change", (event) => {
+        const count = Number(event.target.value);
+        setupPlayers(count);
+      });
+
+      rollButton.addEventListener("click", () => {
+        advanceCurrentPlayer();
+      });
+
+      createLegend();
+      setupPlayers(4);
     </script>
   </body>
 </html>
