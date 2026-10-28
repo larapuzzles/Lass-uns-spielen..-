@@ -571,140 +571,21 @@
       };
 
       const deck = [
-        {
-          category: "blue",
-          title: "Missverständnis im Team",
-          situation: "Eine getroffene Vereinbarung wird von mehreren Teammitgliedern unterschiedlich verstanden. Erst bei der Umsetzung wird deutlich, dass alle von etwas anderem ausgegangen sind.",
-          leadQuestion: "Wie würdest du als Führungskraft mit dieser Situation umgehen?",
-          impulses: [
-            "Wo könnte das Missverständnis entstanden sein?",
-            "Wie klärst du die Situation, ohne nach Schuldigen zu suchen?",
-            "Was könntest du zukünftig anders kommunizieren?"
-          ],
-          optionalRoleplay: "Eine Person übernimmt die Führungskraft, zwei Personen vertreten unterschiedliche Interpretationen der Vereinbarung."
-        },
-        {
-          category: "blue",
-          title: "Zustimmung ohne Umsetzung",
-          situation: "In einer Teamsitzung stimmen alle einer Entscheidung zu. Einige Wochen später stellst du fest, dass Teile des Teams die Vereinbarung nicht umgesetzt haben.",
-          leadQuestion: "Wie sprichst du die fehlende Umsetzung an?",
-          impulses: [
-            "Bedeutet Zustimmung automatisch Verbindlichkeit?",
-            "Woran erkennst du, ob wirklich ein gemeinsames Verständnis besteht?",
-            "Welche Verantwortung liegt bei der Führungskraft, welche beim Team?"
-          ]
-        },
-        {
-          category: "blue",
-          title: "Kritisches Feedback",
-          situation: "Ein Mitarbeitender äußert vor dem gesamten Team deutliche Kritik an einer deiner Entscheidungen.",
-          leadQuestion: "Wie reagierst du in diesem Moment?",
-          impulses: [
-            "Was sollte sofort geklärt werden und was später?",
-            "Wie kannst du Offenheit ermöglichen und gleichzeitig handlungsfähig bleiben?",
-            "Wie würdest du mit der Person anschließend weiterarbeiten?"
-          ]
-        },
-        {
-          category: "red",
-          title: "Offener Konflikt im Meeting",
-          situation: "Zwei Mitarbeitende geraten in einem Meeting in einen offenen Konflikt.",
-          leadQuestion: "Wie würdest du als Führungskraft in dieser Situation reagieren?",
-          impulses: [
-            "Welche unterschiedlichen Interessen sind erkennbar?",
-            "Was müsste sofort geklärt werden?",
-            "Welche alternative Vorgehensweise wäre möglich?"
-          ],
-          optionalRoleplay: "Eine Person übernimmt die Führungskraft, zwei weitere Personen vertreten die Konfliktparteien."
-        },
-        {
-          category: "red",
-          title: "Wiederholt nicht eingehaltene Vereinbarung",
-          situation: "Mit einem Mitarbeitenden wurden bereits mehrfach konkrete Vereinbarungen getroffen. Trotzdem werden diese wiederholt nicht eingehalten.",
-          leadQuestion: "Wie führst du das nächste Gespräch?",
-          impulses: [
-            "Wann reichen weitere Gespräche nicht mehr aus?",
-            "Wie verbindest du Verständnis mit Verbindlichkeit?",
-            "Welche Erwartungen müssen eindeutig ausgesprochen werden?"
-          ]
-        },
-        {
-          category: "red",
-          title: "Widerstand gegen Veränderung",
-          situation: "Eine organisatorische Veränderung wurde beschlossen. Ein Teil des Teams lehnt sie offen ab und fordert von dir, dich gegen die Entscheidung zu stellen.",
-          leadQuestion: "Wie gehst du mit dem Widerstand um?",
-          impulses: [
-            "Welche Interessen könnten hinter dem Widerstand stehen?",
-            "Was kannst du beeinflussen und was nicht?",
-            "Wie kannst du eine Entscheidung vertreten, die du möglicherweise selbst nicht getroffen hast?"
-          ]
-        },
-        {
-          category: "green",
-          title: "Eigener Fehler",
-          situation: "Eine von dir getroffene Entscheidung erweist sich im Nachhinein als falsch und hat zusätzliche Arbeit für das Team verursacht.",
-          leadQuestion: "Wie gehst du mit deinem Fehler gegenüber dem Team um?",
-          impulses: [
-            "Wie transparent solltest du mit eigenen Fehlern umgehen?",
-            "Was würde Verantwortungsübernahme in dieser Situation bedeuten?",
-            "Was kannst du aus der Situation lernen?"
-          ]
-        },
-        {
-          category: "green",
-          title: "Unerwartetes Feedback",
-          situation: "Eine Person aus deinem Team äußert, dass deine Art zu führen als kontrollierend wahrgenommen wird. Du selbst möchtest eigentlich möglichst viel Sicherheit und Orientierung geben.",
-          leadQuestion: "Wie gehst du mit dieser unterschiedlichen Wahrnehmung um?",
-          impulses: [
-            "Was unterscheidet Absicht und Wirkung?",
-            "Welche Fragen könntest du stellen, bevor du dich erklärst?",
-            "Was könntest du ausprobieren, ohne deinen Führungsanspruch vollständig zu verändern?"
-          ]
-        },
-        {
-          category: "green",
-          title: "Unterschiedliche Perspektiven",
-          situation: "Du hältst eine Entscheidung für nachvollziehbar und gerecht. Ein Mitarbeitender bewertet dieselbe Entscheidung als unfair.",
-          leadQuestion: "Wie gehst du mit zwei so unterschiedlichen Wahrnehmungen um?",
-          impulses: [
-            "Muss eine Führungskraft beide Sichtweisen auflösen?",
-            "Was möchtest du über die Perspektive des Mitarbeitenden erfahren?",
-            "Was könnte sich verändern, wenn du die Situation aus dessen Perspektive betrachtest?"
-          ]
-        },
-        {
-          category: "yellow",
-          title: "Entscheidung trotz unvollständiger Informationen",
-          situation: "Du musst kurzfristig eine Entscheidung treffen, obwohl dir wichtige Informationen fehlen.",
-          leadQuestion: "Wie entscheidest du, wenn keine eindeutig richtige Lösung erkennbar ist?",
-          impulses: [
-            "Welche Informationen sind unverzichtbar?",
-            "Wann ist weiteres Abwarten problematischer als eine unvollkommene Entscheidung?",
-            "Wie kommunizierst du Unsicherheit?"
-          ]
-        },
-        {
-          category: "yellow",
-          title: "Delegation oder selbst übernehmen?",
-          situation: "Eine wichtige Aufgabe muss kurzfristig erledigt werden. Du könntest sie selbst schneller erledigen, möchtest aber gleichzeitig Verantwortung im Team fördern.",
-          leadQuestion: "Wie entscheidest du zwischen Delegation und eigener Übernahme?",
-          impulses: [
-            "Welche Kriterien beeinflussen deine Entscheidung?",
-            "Wann wird Eingreifen zu Bevormundung?",
-            "Welche Unterstützung braucht die andere Person, um Verantwortung übernehmen zu können?"
-          ]
-        },
-        {
-          category: "yellow",
-          title: "Zwei berechtigte Interessen",
-          situation: "Ein Mitarbeitender benötigt kurzfristig Entlastung. Gleichzeitig ist das Team aufgrund einer hohen Arbeitsbelastung auf dessen Mitarbeit angewiesen.",
-          leadQuestion: "Wie triffst du eine Entscheidung, wenn beide Interessen nachvollziehbar sind?",
-          impulses: [
-            "Welche Verantwortung hast du gegenüber der einzelnen Person?",
-            "Welche gegenüber dem gesamten Team?",
-            "Wie transparent würdest du deine Entscheidung begründen?"
-          ]
-        }
+        { category: "blue", title: "Missverständnis im Team", situation: "Eine getroffene Vereinbarung wird von mehreren Teammitgliedern unterschiedlich verstanden. Erst bei der Umsetzung wird deutlich, dass alle von etwas anderem ausgegangen sind.", leadQuestion: "Wie würdest du als Führungskraft mit dieser Situation umgehen?", impulses: ["Wo könnte das Missverständnis entstanden sein?", "Wie klärst du die Situation, ohne nach Schuldigen zu suchen?", "Was könntest du zukünftig anders kommunizieren?"], optionalRoleplay: "Eine Person übernimmt die Führungskraft, zwei Personen vertreten unterschiedliche Interpretationen der Vereinbarung." },
+        { category: "blue", title: "Zustimmung ohne Umsetzung", situation: "In einer Teamsitzung stimmen alle einer Entscheidung zu. Einige Wochen später stellst du fest, dass Teile des Teams die Vereinbarung nicht umgesetzt haben.", leadQuestion: "Wie sprichst du die fehlende Umsetzung an?", impulses: ["Bedeutet Zustimmung automatisch Verbindlichkeit?", "Woran erkennst du, ob wirklich ein gemeinsames Verständnis besteht?", "Welche Verantwortung liegt bei der Führungskraft, welche beim Team?"] },
+        { category: "blue", title: "Kritisches Feedback", situation: "Ein Mitarbeitender äußert vor dem gesamten Team deutliche Kritik an einer deiner Entscheidungen.", leadQuestion: "Wie reagierst du in diesem Moment?", impulses: ["Was sollte sofort geklärt werden und was später?", "Wie kannst du Offenheit ermöglichen und gleichzeitig handlungsfähig bleiben?", "Wie würdest du mit der Person anschließend weiterarbeiten?"] },
+
+        { category: "red", title: "Offener Konflikt im Meeting", situation: "Zwei Mitarbeitende geraten in einem Meeting in einen offenen Konflikt.", leadQuestion: "Wie würdest du als Führungskraft in dieser Situation reagieren?", impulses: ["Welche unterschiedlichen Interessen sind erkennbar?", "Was müsste sofort geklärt werden?", "Welche alternative Vorgehensweise wäre möglich?"], optionalRoleplay: "Eine Person übernimmt die Führungskraft, zwei weitere Personen vertreten die Konfliktparteien." },
+        { category: "red", title: "Wiederholt nicht eingehaltene Vereinbarung", situation: "Mit einem Mitarbeitenden wurden bereits mehrfach konkrete Vereinbarungen getroffen. Trotzdem werden diese wiederholt nicht eingehalten.", leadQuestion: "Wie führst du das nächste Gespräch?", impulses: ["Wann reichen weitere Gespräche nicht mehr aus?", "Wie verbindest du Verständnis mit Verbindlichkeit?", "Welche Erwartungen müssen eindeutig ausgesprochen werden?"] },
+        { category: "red", title: "Widerstand gegen Veränderung", situation: "Eine organisatorische Veränderung wurde beschlossen. Ein Teil des Teams lehnt sie offen ab und fordert von dir, dich gegen die Entscheidung zu stellen.", leadQuestion: "Wie gehst du mit dem Widerstand um?", impulses: ["Welche Interessen könnten hinter dem Widerstand stehen?", "Was kannst du beeinflussen und was nicht?", "Wie kannst du eine Entscheidung vertreten, die du möglicherweise selbst nicht getroffen hast?"] },
+
+        { category: "green", title: "Eigener Fehler", situation: "Eine von dir getroffene Entscheidung erweist sich im Nachhinein als falsch und hat zusätzliche Arbeit für das Team verursacht.", leadQuestion: "Wie gehst du mit deinem Fehler gegenüber dem Team um?", impulses: ["Wie transparent solltest du mit eigenen Fehlern umgehen?", "Was würde Verantwortungsübernahme in dieser Situation bedeuten?", "Was kannst du aus der Situation lernen?"] },
+        { category: "green", title: "Unerwartetes Feedback", situation: "Eine Person aus deinem Team äußert, dass deine Art zu führen als kontrollierend wahrgenommen wird. Du selbst möchtest eigentlich möglichst viel Sicherheit und Orientierung geben.", leadQuestion: "Wie gehst du mit dieser unterschiedlichen Wahrnehmung um?", impulses: ["Was unterscheidet Absicht und Wirkung?", "Welche Fragen könntest du stellen, bevor du dich erklärst?", "Was könntest du ausprobieren, ohne deinen Führungsanspruch vollständig zu verändern?"] },
+        { category: "green", title: "Unterschiedliche Perspektiven", situation: "Du hältst eine Entscheidung für nachvollziehbar und gerecht. Ein Mitarbeitender bewertet dieselbe Entscheidung als unfair.", leadQuestion: "Wie gehst du mit zwei so unterschiedlichen Wahrnehmungen um?", impulses: ["Muss eine Führungskraft beide Sichtweisen auflösen?", "Was möchtest du über die Perspektive des Mitarbeitenden erfahren?", "Was könnte sich verändern, wenn du die Situation aus dessen Perspektive betrachtest?"] },
+
+        { category: "yellow", title: "Entscheidung trotz unvollständiger Informationen", situation: "Du musst kurzfristig eine Entscheidung treffen, obwohl dir wichtige Informationen fehlen.", leadQuestion: "Wie entscheidest du, wenn keine eindeutig richtige Lösung erkennbar ist?", impulses: ["Welche Informationen sind unverzichtbar?", "Wann ist weiteres Abwarten problematischer als eine unvollkommene Entscheidung?", "Wie kommunizierst du Unsicherheit?"] },
+        { category: "yellow", title: "Delegation oder selbst übernehmen?", situation: "Eine wichtige Aufgabe muss kurzfristig erledigt werden. Du könntest sie selbst schneller erledigen, möchtest aber gleichzeitig Verantwortung im Team fördern.", leadQuestion: "Wie entscheidest du zwischen Delegation und eigener Übernahme?", impulses: ["Welche Kriterien beeinflussen deine Entscheidung?", "Wann wird Eingreifen zu Bevormundung?", "Welche Unterstützung braucht die andere Person, um Verantwortung übernehmen zu können?"] },
+        { category: "yellow", title: "Zwei berechtigte Interessen", situation: "Ein Mitarbeitender benötigt kurzfristig Entlastung. Gleichzeitig ist das Team aufgrund einer hohen Arbeitsbelastung auf dessen Mitarbeit angewiesen.", leadQuestion: "Wie triffst du eine Entscheidung, wenn beide Interessen nachvollziehbar sind?", impulses: ["Welche Verantwortung hast du gegenüber der einzelnen Person?", "Welche gegenüber dem gesamten Team?", "Wie transparent würdest du deine Entscheidung begründen?"] }
       ];
 
       const playerColors = [
@@ -715,8 +596,6 @@
         "#e85b7d",
         "#5d7c8b"
       ];
-
-      const palette = ["#2f6fcb", "#d9a92a", "#2f9e6f", "#d84d4d"];
 
       const rowPatterns = [
         ["blue", "yellow", "green", "red"],
@@ -774,42 +653,32 @@
       }
 
       function getCategoryForIndex(index) {
-        if (index <= 0 || index >= boardCount - 1) return null;
+        if (index === 0 || index === boardCount - 1) return null;
         const color = getTileColor(index);
         return categoryByColor[color] || null;
       }
 
+      const categoryDecks = {
+        blue: shuffle(deck.filter((card) => card.category === "blue")),
+        yellow: shuffle(deck.filter((card) => card.category === "yellow")),
+        green: shuffle(deck.filter((card) => card.category === "green")),
+        red: shuffle(deck.filter((card) => card.category === "red"))
+      };
+
       function drawCardForCategory(categoryName) {
         if (!categoryName) return;
 
-        let pool = remainingDeck.length
-          ? remainingDeck.filter((card) => card.category === categoryName)
-          : [];
-
-        if (pool.length === 0) {
-          const all = deck.filter((card) => card.category === categoryName);
-          if (all.length === 0) {
-            pool = remainingDeck.length ? remainingDeck : shuffle(deck);
-          } else {
-            pool = shuffle(all);
-          }
+        let deckForCategory = categoryDecks[categoryName];
+        if (!deckForCategory || deckForCategory.length === 0) {
+          deckForCategory = shuffle(deck.filter((card) => card.category === categoryName));
+          categoryDecks[categoryName] = deckForCategory;
         }
 
-        const selected = pool[0];
-        if (!selected) return;
+        const card = deckForCategory.shift();
+        if (!card) return;
 
-        if (remainingDeck.length > 0) {
-          const idx = remainingDeck.findIndex(
-            (card) =>
-              card.title === selected.title &&
-              card.category === selected.category
-          );
-          if (idx !== -1) {
-            remainingDeck.splice(idx, 1);
-          }
-        }
-
-        showCard(selected);
+        currentCard = card;
+        showCard(card);
       }
 
       function showCard(card) {
@@ -841,8 +710,6 @@
 
       let players = [];
       let currentPlayerIndex = 0;
-      let currentCard = null;
-      let remainingDeck = [];
       let timerInterval = null;
       let timerEndTime = 0;
       const MAX_TIME_MS = 10 * 60 * 1000;
@@ -889,7 +756,6 @@
         }));
         currentPlayerIndex = 0;
         currentCard = null;
-        remainingDeck = shuffle(deck);
         resetCardPanel();
         stopTimer();
         statusText.textContent = `${players[0].name} ist am Zug`;
@@ -1029,20 +895,18 @@
         const player = getActivePlayer();
         if (!player) return;
 
-        if (remainingDeck.length === 0) {
-          remainingDeck = shuffle(deck);
-        }
+        const allCards = shuffle(deck);
+        const card = allCards[0];
 
-        const nextCard = remainingDeck[0];
-        if (!nextCard) {
+        if (!card) {
           resetCardPanel();
           return;
         }
 
-        remainingDeck.shift();
-        showCard(nextCard);
+        currentCard = card;
+        showCard(card);
 
-        statusText.textContent = `${player.name} zieht eine zufällige Karte: ${nextCard.title}`;
+        statusText.textContent = `${player.name} zieht eine zufällige Karte: ${card.title}`;
         renderBoard();
       }
 
