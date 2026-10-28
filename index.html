@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Career Board – Laufweg ins Unternehmen</title>
+    <title>Premium Career Board – Pfad-Layout</title>
     <style>
       :root {
         --bg: #eef3fb;
@@ -163,15 +163,17 @@
       }
 
       .board {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(90px, 1fr));
-        gap: 12px;
+        position: relative;
+        width: 100%;
+        height: 560px;
+        border-radius: 24px;
       }
 
       .tile {
-        position: relative;
-        aspect-ratio: 1 / 1;
-        border-radius: 20px;
+        position: absolute;
+        width: 116px;
+        height: 116px;
+        border-radius: 22px;
         border: 1px solid rgba(255,255,255,0.8);
         display: flex;
         align-items: center;
@@ -206,7 +208,7 @@
       }
 
       .tile-content strong {
-        font-size: clamp(0.58rem, 1vw, 0.84rem);
+        font-size: clamp(0.56rem, 0.9vw, 0.8rem);
         line-height: 1.15;
       }
 
@@ -451,6 +453,16 @@
         flex: 1 1 120px;
       }
 
+      @media (max-width: 1100px) {
+        .tile {
+          width: 94px;
+          height: 94px;
+        }
+        .board {
+          height: 500px;
+        }
+      }
+
       @media (max-width: 920px) {
         .layout {
           grid-template-columns: 1fr;
@@ -528,26 +540,10 @@
 
     <script>
       const categoryConfig = {
-        blue: {
-          label: "Kommunikation & Zusammenarbeit",
-          color: "#2f6fcb",
-          soft: "#dfeeff"
-        },
-        yellow: {
-          label: "Entscheidung & Verantwortung",
-          color: "#d9a92a",
-          soft: "#fff3d4"
-        },
-        green: {
-          label: "Selbstreflexion & Perspektivwechsel",
-          color: "#2f9e6f",
-          soft: "#dff5e8"
-        },
-        red: {
-          label: "Konflikte & schwierige Situationen",
-          color: "#d84d4d",
-          soft: "#ffe0e0"
-        }
+        blue: { label: "Kommunikation & Zusammenarbeit", color: "#2f6fcb", soft: "#dfeeff" },
+        yellow: { label: "Entscheidung & Verantwortung", color: "#d9a92a", soft: "#fff3d4" },
+        green: { label: "Selbstreflexion & Perspektivwechsel", color: "#2f9e6f", soft: "#dff5e8" },
+        red: { label: "Konflikte & schwierige Situationen", color: "#d84d4d", soft: "#ffe0e0" }
       };
 
       const deck = [
@@ -696,13 +692,9 @@
         "#5d7c8b"
       ];
 
-      const boardColors = [
+      const palette = [
         "#2f6fcb", "#d9a92a", "#2f9e6f", "#d84d4d",
-        "#7b5de8", "#1ea7a4", "#ef8b3d", "#e9638c",
-        "#52677d", "#2f6fcb", "#d9a92a", "#2f9e6f",
-        "#d84d4d", "#7b5de8", "#1ea7a4", "#ef8b3d",
-        "#e9638c", "#52677d", "#2f6fcb", "#d9a92a",
-        "#2f9e6f", "#d84d4d", "#7b5de8", "#1ea7a4"
+        "#7b5de8", "#1ea7a4", "#ef8b3d", "#e9638c"
       ];
 
       const boardLabels = [
@@ -711,8 +703,69 @@
         "Case", "Perspektive", "Fitcheck", "Interview",
         "Feedback", "Offer", "Vertrag", "Onboarding",
         "Team", "Führung", "Start", "Mission",
-        "Zielbild", "Eintritt", "Integr. ", "Erfolg"
+        "Zielbild", "Eintritt", "Integration", "Erfolg"
       ];
+
+      const count = 24;
+      const tilePositions = [
+        { x: 65, y: 60 },
+        { x: 220, y: 60 },
+        { x: 375, y: 60 },
+        { x: 530, y: 60 },
+        { x: 530, y: 190 },
+        { x: 375, y: 190 },
+        { x: 220, y: 190 },
+        { x: 65, y: 190 },
+        { x: 65, y: 320 },
+        { x: 220, y: 320 },
+        { x: 375, y: 320 },
+        { x: 530, y: 320 },
+        { x: 530, y: 450 },
+        { x: 375, y: 450 },
+        { x: 220, y: 450 },
+        { x: 65, y: 450 },
+        { x: 65, y: 200 },
+        { x: 220, y: 200 },
+        { x: 375, y: 200 },
+        { x: 530, y: 200 },
+        { x: 530, y: 100 },
+        { x: 375, y: 100 },
+        { x: 220, y: 100 },
+        { x: 65, y: 100 }
+      ];
+
+      function generateBoardColors() {
+        const board = new Array(count).fill(null);
+
+        function isValid(index, color) {
+          const rowPrev = index - 1;
+          const rowAbove = index - 4;
+
+          if (rowPrev >= 0 && board[rowPrev] === color) return false;
+          if (rowAbove >= 0 && board[rowAbove] === color) return false;
+
+          return true;
+        }
+
+        function backtrack(i) {
+          if (i >= count) return true;
+
+          const options = shuffle([...palette]);
+          for (const color of options) {
+            if (isValid(i, color)) {
+              board[i] = color;
+              if (backtrack(i + 1)) return true;
+              board[i] = null;
+            }
+          }
+          return false;
+        }
+
+        backtrack(0);
+        return board;
+      }
+
+      const boardColors = generateBoardColors();
 
       let players = [];
       let currentPlayerIndex = 0;
@@ -741,15 +794,6 @@
       const groupImpulses = document.getElementById("groupImpulses");
       const startTimerButton = document.getElementById("startTimerButton");
       const stopTimerButton = document.getElementById("stopTimerButton");
-
-      function shuffle(array) {
-        const copy = [...array];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
-      }
 
       function createLegend() {
         legend.innerHTML = "";
@@ -802,10 +846,12 @@
       function renderBoard() {
         board.innerHTML = "";
 
-        for (let index = 0; index < 24; index++) {
+        for (let index = 0; index < count; index++) {
           const tile = document.createElement("div");
           tile.className = "tile";
           tile.style.background = boardColors[index];
+          tile.style.left = `${tilePositions[index].x}px`;
+          tile.style.top = `${tilePositions[index].y}px`;
 
           if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
             tile.classList.add("active");
@@ -827,7 +873,7 @@
 
           tile.innerHTML = `
             <div class="tile-content">
-              <small>${index === 0 ? "Start" : index === 23 ? "Ziel" : "Schritt"}</small>
+              <small>${index === 0 ? "Start" : index === count - 1 ? "Ziel" : "Schritt"}</small>
               <strong>${boardLabels[index]}</strong>
             </div>
             <div class="tokens">${tokens}</div>
@@ -848,12 +894,12 @@
         if (!player) return;
 
         const result = Math.floor(Math.random() * 6) + 1;
-        const targetPosition = Math.min(player.position + result, 23);
+        const targetPosition = Math.min(player.position + result, count - 1);
         player.position = targetPosition;
 
         diceDisplay.textContent = `Würfel: ${result}`;
 
-        if (targetPosition >= 23) {
+        if (targetPosition >= count - 1) {
           statusText.textContent = `${player.name} hat das Ziel erreicht!`;
         } else {
           statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
