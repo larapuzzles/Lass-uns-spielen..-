@@ -563,6 +563,13 @@
         red: { label: "Konflikte & schwierige Situationen", color: "#d84d4d", soft: "#ffe0e0" }
       };
 
+      const categoryByColor = {
+        "#2f6fcb": "blue",
+        "#d9a92a": "yellow",
+        "#2f9e6f": "green",
+        "#d84d4d": "red"
+      };
+
       const deck = [
         {
           category: "blue",
@@ -745,12 +752,14 @@
 
       function getTileColor(index) {
         const { row, col } = getGridCoords(index);
-        return {
+        const colorName = rowPatterns[row][col];
+        const colorMap = {
           blue: "#2f6fcb",
           yellow: "#d9a92a",
           green: "#2f9e6f",
           red: "#d84d4d"
-        }[rowPatterns[row][col]];
+        };
+        return colorMap[colorName];
       }
 
       function getTilePosition(index) {
@@ -762,6 +771,72 @@
         const y = startY + row * (tileHeight + gapY);
 
         return { x, y };
+      }
+
+      function getCategoryForIndex(index) {
+        if (index <= 0 || index >= boardCount - 1) return null;
+        const color = getTileColor(index);
+        return categoryByColor[color] || null;
+      }
+
+      function drawCardForCategory(categoryName) {
+        if (!categoryName) return;
+
+        let pool = remainingDeck.length
+          ? remainingDeck.filter((card) => card.category === categoryName)
+          : [];
+
+        if (pool.length === 0) {
+          const all = deck.filter((card) => card.category === categoryName);
+          if (all.length === 0) {
+            pool = remainingDeck.length ? remainingDeck : shuffle(deck);
+          } else {
+            pool = shuffle(all);
+          }
+        }
+
+        const selected = pool[0];
+        if (!selected) return;
+
+        if (remainingDeck.length > 0) {
+          const idx = remainingDeck.findIndex(
+            (card) =>
+              card.title === selected.title &&
+              card.category === selected.category
+          );
+          if (idx !== -1) {
+            remainingDeck.splice(idx, 1);
+          }
+        }
+
+        showCard(selected);
+      }
+
+      function showCard(card) {
+        if (!card) return;
+
+        const cfg = categoryConfig[card.category];
+        cardBadge.textContent = cfg.label;
+        cardBadge.style.background = cfg.soft;
+        cardBadge.style.color = cfg.color;
+
+        cardTitle.textContent = card.title;
+        cardSituation.textContent = card.situation;
+        cardQuestion.textContent = card.leadQuestion;
+
+        groupImpulses.innerHTML = "";
+        card.impulses.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          groupImpulses.appendChild(li);
+        });
+
+        if (card.optionalRoleplay) {
+          const li = document.createElement("li");
+          li.style.fontWeight = "600";
+          li.textContent = `Optionales Rollenspiel: ${card.optionalRoleplay}`;
+          groupImpulses.appendChild(li);
+        }
       }
 
       let players = [];
@@ -931,6 +1006,12 @@
           statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
         }
 
+        const categoryName = getCategoryForIndex(targetPosition);
+        if (categoryName) {
+          drawCardForCategory(categoryName);
+          statusText.textContent = `${player.name} landet auf einem ${categoryConfig[categoryName].label} Feld und zieht eine passende Karte.`;
+        }
+
         renderBoard();
       }
 
@@ -952,36 +1033,16 @@
           remainingDeck = shuffle(deck);
         }
 
-        currentCard = remainingDeck.pop();
-        if (!currentCard) {
+        const nextCard = remainingDeck[0];
+        if (!nextCard) {
           resetCardPanel();
           return;
         }
 
-        const cfg = categoryConfig[currentCard.category];
-        cardBadge.textContent = cfg.label;
-        cardBadge.style.background = cfg.soft;
-        cardBadge.style.color = cfg.color;
+        remainingDeck.shift();
+        showCard(nextCard);
 
-        cardTitle.textContent = currentCard.title;
-        cardSituation.textContent = currentCard.situation;
-        cardQuestion.textContent = currentCard.leadQuestion;
-
-        groupImpulses.innerHTML = "";
-        currentCard.impulses.forEach((item) => {
-          const li = document.createElement("li");
-          li.textContent = item;
-          groupImpulses.appendChild(li);
-        });
-
-        if (currentCard.optionalRoleplay) {
-          const li = document.createElement("li");
-          li.style.fontWeight = "600";
-          li.textContent = `Optionales Rollenspiel: ${currentCard.optionalRoleplay}`;
-          groupImpulses.appendChild(li);
-        }
-
-        statusText.textContent = `${player.name} zieht die Karte: ${currentCard.title}`;
+        statusText.textContent = `${player.name} zieht eine zufällige Karte: ${nextCard.title}`;
         renderBoard();
       }
 
