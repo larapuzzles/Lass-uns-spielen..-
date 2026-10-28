@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leadership Board – 12 Felder</title>
+    <title>Premium Career Board – Laufweg ins Unternehmen</title>
     <style>
       :root {
-        --bg: #edf2f7;
+        --bg: #eef3fb;
         --panel: #ffffff;
-        --panel-strong: #f7f9fc;
-        --border: #dbe4ef;
-        --text: #1f2937;
-        --muted: #5f6f82;
-        --shadow: rgba(15, 23, 42, 0.08);
+        --panel-soft: #f7f9fd;
+        --border: #dfe9f5;
+        --text: #1b2430;
+        --muted: #5d6c7a;
+        --shadow: rgba(15, 23, 42, 0.09);
 
         --blue: #2f6fcb;
         --blue-soft: #dfeeff;
@@ -22,8 +22,18 @@
         --green-soft: #dff5e8;
         --red: #d84d4d;
         --red-soft: #ffe0e0;
+        --purple: #7b5de8;
+        --purple-soft: #efe7ff;
+        --teal: #1ea7a4;
+        --teal-soft: #dffaf7;
+        --orange: #ef8b3d;
+        --orange-soft: #fff1df;
+        --rose: #e9638c;
+        --rose-soft: #ffe5ee;
+        --slate: #52677d;
+        --slate-soft: #edf1f5;
 
-        --primary: #1f4e79;
+        --primary: #183d63;
         --dark: #1d2430;
       }
 
@@ -46,12 +56,12 @@
       }
 
       .app {
-        width: min(98vw, 1200px);
+        width: min(98vw, 1280px);
         background: var(--panel);
         border: 1px solid var(--border);
-        border-radius: 28px;
-        box-shadow: 0 22px 46px var(--shadow);
-        padding: 20px;
+        border-radius: 30px;
+        box-shadow: 0 24px 48px var(--shadow);
+        padding: 22px;
       }
 
       .topbar {
@@ -59,13 +69,14 @@
         justify-content: space-between;
         align-items: center;
         gap: 16px;
-        margin-bottom: 18px;
         flex-wrap: wrap;
+        margin-bottom: 18px;
       }
 
       .title-group h1 {
         margin: 0;
-        font-size: clamp(1.6rem, 2.2vw, 2.3rem);
+        font-size: clamp(1.7rem, 2.3vw, 2.5rem);
+        letter-spacing: 0.02em;
       }
 
       .subtitle {
@@ -82,7 +93,7 @@
       }
 
       .controls label {
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         color: var(--muted);
       }
 
@@ -96,18 +107,19 @@
       }
 
       button {
-        background: linear-gradient(135deg, #1f4e79, #2d6fa3);
+        background: linear-gradient(135deg, #183d63, #235f97);
         color: white;
         border: none;
         cursor: pointer;
-        font-weight: 600;
-        box-shadow: 0 10px 20px rgba(31, 78, 121, 0.2);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        box-shadow: 0 10px 20px rgba(24, 61, 99, 0.18);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
 
       button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 12px 24px rgba(31, 78, 121, 0.24);
+        box-shadow: 0 12px 24px rgba(24, 61, 99, 0.24);
       }
 
       .statusbar {
@@ -115,20 +127,20 @@
         justify-content: space-between;
         align-items: center;
         gap: 12px;
-        background: var(--panel-strong);
+        background: var(--panel-soft);
         border: 1px solid var(--border);
         border-radius: 16px;
-        padding: 14px 18px;
+        padding: 16px 18px;
         margin-bottom: 18px;
         flex-wrap: wrap;
       }
 
       .status-text {
-        font-weight: 600;
+        font-weight: 700;
       }
 
       .dice-display {
-        min-width: 130px;
+        min-width: 140px;
         text-align: center;
         background: #fff;
         border: 1px solid var(--border);
@@ -144,9 +156,9 @@
       }
 
       .board-wrap {
-        background: var(--board-bg);
+        background: linear-gradient(180deg, #f6f9ff, #edf5ff);
         border: 1px solid var(--border);
-        border-radius: 22px;
+        border-radius: 24px;
         padding: 18px;
       }
 
@@ -159,13 +171,13 @@
       .tile {
         position: relative;
         aspect-ratio: 1 / 1;
-        border-radius: 18px;
+        border-radius: 20px;
         border: 1px solid rgba(255,255,255,0.8);
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.04);
+        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.05);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
 
@@ -175,7 +187,7 @@
       }
 
       .tile.active {
-        outline: 3px solid rgba(17, 24, 39, 0.7);
+        outline: 3px solid rgba(17, 24, 39, 0.72);
         outline-offset: -3px;
       }
 
@@ -187,18 +199,20 @@
         align-items: center;
         justify-content: center;
         gap: 6px;
-        font-weight: 700;
-        color: rgba(17, 24, 39, 0.75);
         text-align: center;
+        font-weight: 800;
+        color: rgba(17, 24, 39, 0.77);
+        padding: 8px;
       }
 
       .tile-content strong {
-        font-size: clamp(0.62rem, 1.2vw, 0.82rem);
+        font-size: clamp(0.58rem, 1vw, 0.84rem);
+        line-height: 1.15;
       }
 
       .tile-content small {
-        font-size: 0.52rem;
-        letter-spacing: 0.05em;
+        font-size: 0.48rem;
+        letter-spacing: 0.07em;
         text-transform: uppercase;
       }
 
@@ -213,13 +227,13 @@
         width: 24px;
         height: 24px;
         border-radius: 50%;
-        border: 3px solid rgba(255,255,255,0.96);
+        border: 3px solid rgba(255,255,255,0.92);
         box-shadow: 0 3px 8px rgba(0,0,0,0.12);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 0.62rem;
-        color: #fff;
+        color: white;
         font-weight: 700;
         bottom: 10px;
         left: 50%;
@@ -259,7 +273,7 @@
       }
 
       .panel {
-        background: var(--panel-strong);
+        background: var(--panel-soft);
         border: 1px solid var(--border);
         border-radius: 18px;
         padding: 16px;
@@ -303,8 +317,8 @@
       }
 
       .player-item.active {
-        border-color: rgba(31, 78, 121, 0.5);
-        background: #eef5ff;
+        border-color: rgba(24, 61, 99, 0.5);
+        background: #edf5ff;
       }
 
       .timer-panel {
@@ -319,8 +333,8 @@
         background: linear-gradient(to bottom, #f6faff, #eef5ff);
         border: 4px solid #1c3047;
         border-radius: 18px;
-        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
         overflow: hidden;
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
       }
 
       .sandglass::before,
@@ -382,7 +396,7 @@
       }
 
       .card-box {
-        background: linear-gradient(180deg, #fff, #f8fbff);
+        background: linear-gradient(180deg, #fff, #f9fbff);
         border: 1px solid var(--border);
         border-radius: 18px;
         padding: 16px;
@@ -401,7 +415,7 @@
       .card-title {
         margin: 12px 0 8px;
         font-size: 1.08rem;
-        font-weight: 700;
+        font-weight: 800;
       }
 
       .card-situation {
@@ -448,8 +462,8 @@
     <div class="app">
       <div class="topbar">
         <div class="title-group">
-          <h1>Leadership Board</h1>
-          <div class="subtitle">Management-Lernspiel für Führungs- und Teamgespräche</div>
+          <h1>Laufweg ins Unternehmen</h1>
+          <div class="subtitle">Premium-Spiel für Karriere- und Führungsgespräche</div>
         </div>
 
         <div class="controls">
@@ -682,10 +696,22 @@
         "#5d7c8b"
       ];
 
-      const boardOrder = [
-        "blue", "yellow", "green", "red",
-        "blue", "yellow", "green", "red",
-        "blue", "yellow", "green", "red"
+      const boardColors = [
+        "#2f6fcb", "#d9a92a", "#2f9e6f", "#d84d4d",
+        "#7b5de8", "#1ea7a4", "#ef8b3d", "#e9638c",
+        "#52677d", "#2f6fcb", "#d9a92a", "#2f9e6f",
+        "#d84d4d", "#7b5de8", "#1ea7a4", "#ef8b3d",
+        "#e9638c", "#52677d", "#2f6fcb", "#d9a92a",
+        "#2f9e6f", "#d84d4d", "#7b5de8", "#1ea7a4"
+      ];
+
+      const boardLabels = [
+        "Bewerbung", "Portfolio", "Kontakt", "Screening",
+        "CV Check", "Telefon", "Vorstellung", "Assessment",
+        "Case", "Perspektive", "Fitcheck", "Interview",
+        "Feedback", "Offer", "Vertrag", "Onboarding",
+        "Team", "Führung", "Start", "Mission",
+        "Zielbild", "Eintritt", "Integr. ", "Erfolg"
       ];
 
       let players = [];
@@ -716,6 +742,15 @@
       const startTimerButton = document.getElementById("startTimerButton");
       const stopTimerButton = document.getElementById("stopTimerButton");
 
+      function shuffle(array) {
+        const copy = [...array];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
       function createLegend() {
         legend.innerHTML = "";
         Object.values(categoryConfig).forEach((cfg) => {
@@ -727,15 +762,6 @@
           `;
           legend.appendChild(item);
         });
-      }
-
-      function shuffle(array) {
-        const copy = [...array];
-        for (let i = copy.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
-        }
-        return copy;
       }
 
       function setupPlayers(count) {
@@ -773,25 +799,13 @@
         });
       }
 
-      function getBoardColor(index) {
-        if (index === 0) return "#dfeeff"; // Start
-        if (index === boardOrder.length - 1) return "#fff3d4"; // Ziel
-        return categoryConfig[boardOrder[index]].color;
-      }
-
-      function getBoardTitle(index) {
-        if (index === 0) return "Start";
-        if (index === boardOrder.length - 1) return "Ziel";
-        return categoryConfig[boardOrder[index]].label.split(" & ")[0];
-      }
-
       function renderBoard() {
         board.innerHTML = "";
 
-        boardOrder.forEach((category, index) => {
+        for (let index = 0; index < 24; index++) {
           const tile = document.createElement("div");
           tile.className = "tile";
-          tile.style.background = getBoardColor(index);
+          tile.style.background = boardColors[index];
 
           if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
             tile.classList.add("active");
@@ -813,14 +827,14 @@
 
           tile.innerHTML = `
             <div class="tile-content">
-              <small>${index === 0 || index === boardOrder.length - 1 ? "" : "Feld"}</small>
-              <strong>${getBoardTitle(index)}</strong>
+              <small>${index === 0 ? "Start" : index === 23 ? "Ziel" : "Schritt"}</small>
+              <strong>${boardLabels[index]}</strong>
             </div>
             <div class="tokens">${tokens}</div>
           `;
 
           board.appendChild(tile);
-        });
+        }
 
         renderPlayers();
       }
@@ -834,12 +848,12 @@
         if (!player) return;
 
         const result = Math.floor(Math.random() * 6) + 1;
-        const targetPosition = Math.min(player.position + result, boardOrder.length - 1);
+        const targetPosition = Math.min(player.position + result, 23);
         player.position = targetPosition;
 
         diceDisplay.textContent = `Würfel: ${result}`;
 
-        if (targetPosition >= boardOrder.length - 1) {
+        if (targetPosition >= 23) {
           statusText.textContent = `${player.name} hat das Ziel erreicht!`;
         } else {
           statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
