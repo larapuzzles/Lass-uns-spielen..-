@@ -3,17 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digitales Spielbrett</title>
+  <title>Digitales Lernspiel-Brett</title>
   <style>
     :root {
-      --board-size: 10;
-      --cell-size: 52px;
-      --gap: 6px;
-      --bg: #121826;
-      --panel: #1d263b;
-      --border: #2d3a52;
-      --text: #edf3ff;
-      --shadow: rgba(0, 0, 0, 0.25);
+      --board-cols: 8;
+      --board-rows: 8;
+      --tile-size: 62px;
+      --gap: 8px;
+      --bg-dark: #0f172a;
+      --bg-panel: #111827;
+      --panel: #1f2937;
+      --panel-alt: #374151;
+      --text: #e5eefb;
+      --muted: #b7c3d9;
+      --accent: #60a5fa;
+      --shadow: rgba(15, 23, 42, 0.32);
     }
 
     * {
@@ -25,121 +29,230 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background:
+        radial-gradient(circle at top, rgba(96, 165, 250, 0.25), transparent 40%),
+        linear-gradient(135deg, #0b1120, #111827 50%, #0f172a);
       color: var(--text);
-      font-family: Arial, sans-serif;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .board-wrapper {
-      background: var(--panel);
-      border: 2px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
-      box-shadow: 0 12px 30px var(--shadow);
+    .app {
+      background: rgba(17, 24, 39, 0.92);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 40px var(--shadow);
+      width: min(92vw, 760px);
+    }
+
+    .title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
     }
 
     h1 {
-      text-align: center;
-      margin-top: 0;
-      margin-bottom: 18px;
-      font-size: 1.5rem;
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
       letter-spacing: 0.04em;
+    }
+
+    .badge {
+      background: rgba(96, 165, 250, 0.15);
+      color: #dfeeff;
+      border: 1px solid rgba(96, 165, 250, 0.35);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, auto) minmax(200px, 260px);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .board-panel {
+      background: rgba(31, 41, 55, 0.85);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
     }
 
     .board {
       display: grid;
-      grid-template-columns: repeat(var(--board-size), var(--cell-size));
+      grid-template-columns: repeat(var(--board-cols), var(--tile-size));
+      grid-template-rows: repeat(var(--board-rows), var(--tile-size));
       gap: var(--gap);
-      background: #0b1220;
-      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 16px;
       padding: 12px;
-      border: 2px solid rgba(255,255,255,0.06);
+      width: max-content;
     }
 
-    .cell {
-      width: var(--cell-size);
-      height: var(--cell-size);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
+    .tile {
+      position: relative;
+      width: var(--tile-size);
+      height: var(--tile-size);
+      border: none;
+      border-radius: 16px;
       cursor: pointer;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      background: var(--tile-color, #64748b);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        0 5px 12px rgba(0,0,0,0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+      outline: none;
     }
 
-    .cell:hover {
-      transform: translateY(-1px) scale(1.02);
-      border-color: rgba(255,255,255,0.35);
+    .tile:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.28),
+        0 8px 18px rgba(0,0,0,0.18);
     }
 
-    .cell.selected {
-      outline: 3px solid rgba(255,255,255,0.9);
+    .tile:focus-visible {
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.8), 0 0 0 6px rgba(96,165,250,0.45);
+    }
+
+    .tile.selected {
+      outline: 3px solid rgba(255,255,255,0.85);
       outline-offset: 2px;
+      filter: brightness(1.1);
+    }
+
+    .tile::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      pointer-events: none;
+    }
+
+    .info-panel {
+      background: rgba(31, 41, 55, 0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .info-panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.1rem;
+    }
+
+    .tile-card {
+      background: rgba(17, 24, 39, 0.9);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 16px;
+    }
+
+    .tile-preview {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 12px;
+      border: 2px solid rgba(255,255,255,0.18);
+      background: var(--preview-color, #64748b);
+    }
+
+    .tile-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
     }
 
     .legend {
-      margin-top: 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 16px;
-      justify-content: center;
-      font-size: 0.9rem;
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      opacity: 0.9;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
     .legend-swatch {
-      width: 14px;
-      height: 14px;
-      border-radius: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
       display: inline-block;
-      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    @media (max-width: 700px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .board-panel {
+        overflow-x: auto;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="board-wrapper">
-    <h1>Spielbrett</h1>
-    <div id="board" class="board" aria-label="Spielbrett"></div>
+  <div class="app">
+    <div class="title-bar">
+      <h1>Spielbrett</h1>
+      <div class="badge">Lernspiel</div>
+    </div>
 
-    <div class="legend">
-      <div class="legend-item"><span class="legend-swatch" style="background:#ef4444"></span>Rot</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#3b82f6"></span>Blau</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#22c55e"></span>Grün</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#facc15"></span>Gelb</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#a855f7"></span>Lila</div>
-      <div class="legend-item"><span class="legend-swatch" style="background:#f97316"></span>Orange</div>
+    <div class="game-layout">
+      <div class="board-panel">
+        <div id="board" class="board" aria-label="Spieldarstellung"></div>
+      </div>
+
+      <aside class="info-panel">
+        <h2>Feld-Details</h2>
+
+        <div class="tile-card">
+          <div style="display:flex; align-items:center;">
+            <span id="preview" class="tile-preview"></span>
+            <div>
+              <div id="tileName" class="tile-name">Wähle ein Feld</div>
+            </div>
+          </div>
+          <div id="tileMeta" class="meta" style="margin-top: 12px;">
+            Klicke auf ein Feld, um Informationen zu sehen.
+          </div>
+        </div>
+
+        <div class="legend" id="legend"></div>
+      </aside>
     </div>
   </div>
 
   <script>
-    const board = document.getElementById("board");
-    const boardSize = 10;
-    const colors = ["#ef4444", "#3b82f6", "#22c55e", "#facc15", "#a855f7", "#f97316"];
+    const boardEl = document.getElementById("board");
+    const tileNameEl = document.getElementById("tileName");
+    const tileMetaEl = document.getElementById("tileMeta");
+    const previewEl = document.getElementById("preview");
+    const legendEl = document.getElementById("legend");
 
-    function createBoard() {
-      for (let i = 0; i < boardSize * boardSize; i++) {
-        const cell = document.createElement("button");
-        cell.type = "button";
-        cell.className = "cell";
-        cell.style.background = colors[Math.floor(Math.random() * colors.length)];
-        cell.setAttribute("aria-label", `Feld ${i + 1}`);
-
-        cell.addEventListener("click", () => {
-          const selected = document.querySelector(".cell.selected");
-          if (selected) selected.classList.remove("selected");
-          cell.classList.add("selected");
-        });
-
-        board.appendChild(cell);
-      }
-    }
-
-    createBoard();
-  </script>
-</body>
-</html>
+    const tileTypes = [
+      { name: "](#)*
