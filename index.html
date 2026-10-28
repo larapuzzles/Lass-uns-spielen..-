@@ -586,5 +586,406 @@
         {
           category: "red",
           title: "Wiederholt nicht eingehaltene Vereinbarung",
-          situation: "Mit einem Mitarbeitenden wurden bereits mehrfach konkrete Vereinbarungen getroffen. Trotzdem werden diese wiederholt nicht eingehalten.",](#)*
-
+          situation: "Mit einem Mitarbeitenden wurden bereits mehrfach konkrete Vereinbarungen getroffen. Trotzdem werden diese wiederholt nicht eingehalten.",
+          leadQuestion: "Wie führst du das nächste Gespräch?",
+          impulses: [
+            "Wann reichen weitere Gespräche nicht mehr aus?",
+            "Wie verbindest du Verständnis mit Verbindlichkeit?",
+            "Welche Erwartungen müssen eindeutig ausgesprochen werden?"
+          ]
+        },
+        {
+          category: "red",
+          title: "Widerstand gegen Veränderung",
+          situation: "Eine organisatorische Veränderung wurde beschlossen. Ein Teil des Teams lehnt sie offen ab und fordert von dir, dich gegen die Entscheidung zu stellen.",
+          leadQuestion: "Wie gehst du mit dem Widerstand um?",
+          impulses: [
+            "Welche Interessen könnten hinter dem Widerstand stehen?",
+            "Was kannst du beeinflussen und was nicht?",
+            "Wie kannst du eine Entscheidung vertreten, die du möglicherweise selbst nicht getroffen hast?"
+          ]
+        },
+        {
+          category: "green",
+          title: "Eigener Fehler",
+          situation: "Eine von dir getroffene Entscheidung erweist sich im Nachhinein als falsch und hat zusätzliche Arbeit für das Team verursacht.",
+          leadQuestion: "Wie gehst du mit deinem Fehler gegenüber dem Team um?",
+          impulses: [
+            "Wie transparent solltest du mit eigenen Fehlern umgehen?",
+            "Was würde Verantwortungsübernahme in dieser Situation bedeuten?",
+            "Was kannst du aus der Situation lernen?"
+          ]
+        },
+        {
+          category: "green",
+          title: "Unerwartetes Feedback",
+          situation: "Eine Person aus deinem Team äußert, dass deine Art zu führen als kontrollierend wahrgenommen wird. Du selbst möchtest eigentlich möglichst viel Sicherheit und Orientierung geben.",
+          leadQuestion: "Wie gehst du mit dieser unterschiedlichen Wahrnehmung um?",
+          impulses: [
+            "Was unterscheidet Absicht und Wirkung?",
+            "Welche Fragen könntest du stellen, bevor du dich erklärst?",
+            "Was könntest du ausprobieren, ohne deinen Führungsanspruch vollständig zu verändern?"
+          ]
+        },
+        {
+          category: "green",
+          title: "Unterschiedliche Perspektiven",
+          situation: "Du hältst eine Entscheidung für nachvollziehbar und gerecht. Ein Mitarbeitender bewertet dieselbe Entscheidung als unfair.",
+          leadQuestion: "Wie gehst du mit zwei so unterschiedlichen Wahrnehmungen um?",
+          impulses: [
+            "Muss eine Führungskraft beide Sichtweisen auflösen?",
+            "Was möchtest du über die Perspektive des Mitarbeitenden erfahren?",
+            "Was könnte sich verändern, wenn du die Situation aus dessen Perspektive betrachtest?"
+          ]
+        },
+        {
+          category: "yellow",
+          title: "Entscheidung trotz unvollständiger Informationen",
+          situation: "Du musst kurzfristig eine Entscheidung treffen, obwohl dir wichtige Informationen fehlen.",
+          leadQuestion: "Wie entscheidest du, wenn keine eindeutig richtige Lösung erkennbar ist?",
+          impulses: [
+            "Welche Informationen sind unverzichtbar?",
+            "Wann ist weiteres Abwarten problematischer als eine unvollkommene Entscheidung?",
+            "Wie kommunizierst du Unsicherheit?"
+          ]
+        },
+        {
+          category: "yellow",
+          title: "Delegation oder selbst übernehmen?",
+          situation: "Eine wichtige Aufgabe muss kurzfristig erledigt werden. Du könntest sie selbst schneller erledigen, möchtest aber gleichzeitig Verantwortung im Team fördern.",
+          leadQuestion: "Wie entscheidest du zwischen Delegation und eigener Übernahme?",
+          impulses: [
+            "Welche Kriterien beeinflussen deine Entscheidung?",
+            "Wann wird Eingreifen zu Bevormundung?",
+            "Welche Unterstützung braucht die andere Person, um Verantwortung übernehmen zu können?"
+          ]
+        },
+        {
+          category: "yellow",
+          title: "Zwei berechtigte Interessen",
+          situation: "Ein Mitarbeitender benötigt kurzfristig Entlastung. Gleichzeitig ist das Team aufgrund einer hohen Arbeitsbelastung auf dessen Mitarbeit angewiesen.",
+          leadQuestion: "Wie triffst du eine Entscheidung, wenn beide Interessen nachvollziehbar sind?",
+          impulses: [
+            "Welche Verantwortung hast du gegenüber der einzelnen Person?",
+            "Welche gegenüber dem gesamten Team?",
+            "Wie transparent würdest du deine Entscheidung begründen?"
+          ]
+        }
+      ];
+
+      const playerColors = [
+        "#2d6cdf",
+        "#2db38f",
+        "#f29c3d",
+        "#a96af4",
+        "#e85b7d",
+        "#5d7c8b"
+      ];
+
+      const boardOrder = [
+        "blue", "yellow", "green", "red",
+        "blue", "yellow", "green", "red",
+        "blue", "yellow", "green", "red"
+      ];
+
+      let players = [];
+      let currentPlayerIndex = 0;
+      let currentCard = null;
+      let remainingDeck = [];
+      let timerInterval = null;
+      let timerEndTime = 0;
+      const MAX_TIME_MS = 10 * 60 * 1000;
+
+      const board = document.getElementById("board");
+      const legend = document.getElementById("legend");
+      const statusText = document.getElementById("statusText");
+      const diceDisplay = document.getElementById("diceDisplay");
+      const playerCountSelect = document.getElementById("playerCount");
+      const rollButton = document.getElementById("rollButton");
+      const drawCardButton = document.getElementById("drawCardButton");
+      const nextTurnButton = document.getElementById("nextTurnButton");
+      const playerList = document.getElementById("playerList");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const sandTop = document.getElementById("sandTop");
+      const sandBottom = document.getElementById("sandBottom");
+      const cardBadge = document.getElementById("cardBadge");
+      const cardTitle = document.getElementById("cardTitle");
+      const cardSituation = document.getElementById("cardSituation");
+      const cardQuestion = document.getElementById("cardQuestion");
+      const groupImpulses = document.getElementById("groupImpulses");
+      const startTimerButton = document.getElementById("startTimerButton");
+      const stopTimerButton = document.getElementById("stopTimerButton");
+
+      function createLegend() {
+        legend.innerHTML = "";
+        Object.values(categoryConfig).forEach((cfg) => {
+          const item = document.createElement("div");
+          item.className = "legend-item";
+          item.innerHTML = `
+            <span class="legend-mark" style="background:${cfg.color}"></span>
+            <span>${cfg.label}</span>
+          `;
+          legend.appendChild(item);
+        });
+      }
+
+      function shuffle(array) {
+        const copy = [...array];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      function setupPlayers(count) {
+        players = Array.from({ length: count }, (_, i) => ({
+          id: i + 1,
+          name: `Spieler ${i + 1}`,
+          color: playerColors[i % playerColors.length],
+          position: 0
+        }));
+        currentPlayerIndex = 0;
+        currentCard = null;
+        remainingDeck = shuffle(deck);
+        resetCardPanel();
+        stopTimer();
+        statusText.textContent = `${players[0].name} ist am Zug`;
+        diceDisplay.textContent = "Würfel: –";
+        renderBoard();
+        renderPlayers();
+      }
+
+      function renderPlayers() {
+        playerList.innerHTML = "";
+        players.forEach((player, index) => {
+          const activeClass = index === currentPlayerIndex ? "active" : "";
+          const item = document.createElement("div");
+          item.className = `player-item ${activeClass}`;
+          item.innerHTML = `
+            <div class="player-meta">
+              <span class="player-dot" style="background:${player.color}"></span>
+              <span>${player.name}</span>
+            </div>
+            <strong>Feld ${player.position + 1}</strong>
+          `;
+          playerList.appendChild(item);
+        });
+      }
+
+      function getBoardColor(index) {
+        if (index === 0) return "#dfeeff";
+        if (index === boardOrder.length - 1) return "#fff3d4";
+        return categoryConfig[boardOrder[index]].soft;
+      }
+
+      function getBoardTitle(index) {
+        if (index === 0) return "Start";
+        if (index === boardOrder.length - 1) return "Ziel";
+        return categoryConfig[boardOrder[index]].label.split(" & ")[0];
+      }
+
+      function renderBoard() {
+        board.innerHTML = "";
+
+        boardOrder.forEach((category, index) => {
+          const tile = document.createElement("div");
+          tile.className = "tile";
+          tile.style.background = getBoardColor(index);
+
+          if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
+            tile.classList.add("active");
+          }
+
+          const tokens = players
+            .filter((player) => player.position === index)
+            .map((player, tokenIndex) => {
+              const allOnTile = players.filter((p) => p.position === index).length;
+              const offset = allOnTile > 1 ? tokenIndex * 12 - ((allOnTile - 1) * 12) / 2 : 0;
+              const token = document.createElement("div");
+              token.className = "token";
+              token.style.background = player.color;
+              token.style.setProperty("--offset", `${offset}px`);
+              token.textContent = player.id;
+              return token.outerHTML;
+            })
+            .join("");
+
+          tile.innerHTML = `
+            <div class="tile-content">
+              <small>${index === 0 || index === boardOrder.length - 1 ? "" : "Feld"}</small>
+              <strong>${getBoardTitle(index)}</strong>
+            </div>
+            <div class="tokens">${tokens}</div>
+          `;
+
+          board.appendChild(tile);
+        });
+
+        renderPlayers();
+      }
+
+      function getActivePlayer() {
+        return players[currentPlayerIndex];
+      }
+
+      function rollDice() {
+        const player = getActivePlayer();
+        if (!player) return;
+
+        const result = Math.floor(Math.random() * 6) + 1;
+        const targetPosition = Math.min(player.position + result, boardOrder.length - 1);
+        player.position = targetPosition;
+
+        diceDisplay.textContent = `Würfel: ${result}`;
+
+        if (targetPosition >= boardOrder.length - 1) {
+          statusText.textContent = `${player.name} hat das Ziel erreicht!`;
+        } else {
+          statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
+        }
+
+        renderBoard();
+      }
+
+      function resetCardPanel() {
+        cardBadge.textContent = "Kategorie";
+        cardBadge.style.background = "#eef2f8";
+        cardBadge.style.color = "#1f4e79";
+        cardTitle.textContent = "Noch keine Karte gezogen";
+        cardSituation.textContent = "Die aktive Person zieht eine Karte und beschreibt, wie sie die Situation lösen würde.";
+        cardQuestion.textContent = "„So würde ich die Situation lösen.“";
+        groupImpulses.innerHTML = "";
+      }
+
+      function drawCard() {
+        const player = getActivePlayer();
+        if (!player) return;
+
+        if (remainingDeck.length === 0) {
+          remainingDeck = shuffle(deck);
+        }
+
+        currentCard = remainingDeck.pop();
+        if (!currentCard) {
+          resetCardPanel();
+          return;
+        }
+
+        const cfg = categoryConfig[currentCard.category];
+        cardBadge.textContent = cfg.label;
+        cardBadge.style.background = cfg.soft;
+        cardBadge.style.color = cfg.color;
+
+        cardTitle.textContent = currentCard.title;
+        cardSituation.textContent = currentCard.situation;
+        cardQuestion.textContent = currentCard.leadQuestion;
+
+        groupImpulses.innerHTML = "";
+        currentCard.impulses.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          groupImpulses.appendChild(li);
+        });
+
+        if (currentCard.optionalRoleplay) {
+          const li = document.createElement("li");
+          li.style.fontWeight = "600";
+          li.textContent = `Optionales Rollenspiel: ${currentCard.optionalRoleplay}`;
+          groupImpulses.appendChild(li);
+        }
+
+        statusText.textContent = `${player.name} zieht die Karte: ${currentCard.title}`;
+        renderBoard();
+      }
+
+      function formatTime(ms) {
+        const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      function updateSandglass() {
+        const remaining = Math.max(0, timerEndTime - Date.now());
+        const ratio = remaining / MAX_TIME_MS;
+
+        const topHeight = Math.max(0, ratio * 46);
+        const bottomHeight = Math.max(0, (1 - ratio) * 46);
+
+        sandTop.style.height = `${topHeight}%`;
+        sandBottom.style.height = `${bottomHeight}%`;
+
+        timerDisplay.textContent = formatTime(remaining);
+
+        if (remaining <= 0) {
+          stopTimer();
+          statusText.textContent = `${getActivePlayer().name} hat die Zeit für die Gesprächssituation erreicht.`;
+        }
+      }
+
+      function startTimer() {
+        if (!currentCard) {
+          statusText.textContent = "Zuerst muss eine Karte gezogen werden.";
+          return;
+        }
+
+        stopTimer();
+        timerEndTime = Date.now() + MAX_TIME_MS;
+        timerInterval = setInterval(updateSandglass, 250);
+        updateSandglass();
+      }
+
+      function stopTimer() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+
+        sandTop.style.height = "46%";
+        sandBottom.style.height = "46%";
+        timerDisplay.textContent = "10:00";
+      }
+
+      function nextTurn() {
+        stopTimer();
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+        const nextPlayer = getActivePlayer();
+        statusText.textContent = `${nextPlayer.name} ist am Zug`;
+        diceDisplay.textContent = "Würfel: –";
+        resetCardPanel();
+        renderBoard();
+      }
+
+      playerCountSelect.addEventListener("change", (event) => {
+        setupPlayers(Number(event.target.value));
+      });
+
+      rollButton.addEventListener("click", () => {
+        const player = getActivePlayer();
+        if (!player) return;
+        rollDice();
+      });
+
+      drawCardButton.addEventListener("click", () => {
+        drawCard();
+      });
+
+      nextTurnButton.addEventListener("click", () => {
+        nextTurn();
+      });
+
+      startTimerButton.addEventListener("click", () => {
+        startTimer();
+      });
+
+      stopTimerButton.addEventListener("click", () => {
+        stopTimer();
+        statusText.textContent = `${getActivePlayer().name} hat die Zeit gestoppt.`;
+      });
+
+      createLegend();
+      setupPlayers(4);
+    </script>
+  </body>
+</html>
