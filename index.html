@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Leadership Board – Managementspiel</title>
+    <title>Leadership Board – 12 Felder</title>
     <style>
       :root {
         --bg: #edf2f7;
@@ -16,14 +16,13 @@
 
         --blue: #2f6fcb;
         --blue-soft: #dfeeff;
-        --red: #d84d4d;
-        --red-soft: #ffe0e0;
-        --green: #2f9e6f;
-        --green-soft: #dff5e8;
         --yellow: #d9a92a;
         --yellow-soft: #fff3d4;
+        --green: #2f9e6f;
+        --green-soft: #dff5e8;
+        --red: #d84d4d;
+        --red-soft: #ffe0e0;
 
-        --board-bg: #eef3f8;
         --primary: #1f4e79;
         --dark: #1d2430;
       }
@@ -47,7 +46,7 @@
       }
 
       .app {
-        width: min(98vw, 1220px);
+        width: min(98vw, 1200px);
         background: var(--panel);
         border: 1px solid var(--border);
         border-radius: 28px;
@@ -67,7 +66,6 @@
       .title-group h1 {
         margin: 0;
         font-size: clamp(1.6rem, 2.2vw, 2.3rem);
-        letter-spacing: 0.02em;
       }
 
       .subtitle {
@@ -103,7 +101,6 @@
         border: none;
         cursor: pointer;
         font-weight: 600;
-        letter-spacing: 0.02em;
         box-shadow: 0 10px 20px rgba(31, 78, 121, 0.2);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
@@ -142,7 +139,7 @@
 
       .layout {
         display: grid;
-        grid-template-columns: minmax(440px, 2fr) minmax(280px, 1fr);
+        grid-template-columns: minmax(420px, 2fr) minmax(290px, 1fr);
         gap: 18px;
       }
 
@@ -155,20 +152,20 @@
 
       .board {
         display: grid;
-        grid-template-columns: repeat(6, minmax(72px, 1fr));
+        grid-template-columns: repeat(4, minmax(90px, 1fr));
         gap: 12px;
       }
 
       .tile {
         position: relative;
         aspect-ratio: 1 / 1;
-        border-radius: 16px;
+        border-radius: 18px;
         border: 1px solid rgba(255,255,255,0.8);
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.04);
         overflow: hidden;
+        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.04);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
 
@@ -189,22 +186,20 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
         gap: 6px;
         font-weight: 700;
         color: rgba(17, 24, 39, 0.75);
-        position: relative;
-      }
-
-      .tile-content small {
-        font-size: 0.56rem;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
+        text-align: center;
       }
 
       .tile-content strong {
-        font-size: clamp(0.56rem, 1vw, 0.82rem);
-        line-height: 1.1;
+        font-size: clamp(0.62rem, 1.2vw, 0.82rem);
+      }
+
+      .tile-content small {
+        font-size: 0.52rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
       }
 
       .tokens {
@@ -215,10 +210,10 @@
 
       .token {
         position: absolute;
-        width: 22px;
-        height: 22px;
+        width: 24px;
+        height: 24px;
         border-radius: 50%;
-        border: 3px solid rgba(255,255,255,0.95);
+        border: 3px solid rgba(255,255,255,0.96);
         box-shadow: 0 3px 8px rgba(0,0,0,0.12);
         display: flex;
         align-items: center;
@@ -226,8 +221,8 @@
         font-size: 0.62rem;
         color: #fff;
         font-weight: 700;
-        left: 50%;
         bottom: 10px;
+        left: 50%;
         transform: translateX(var(--offset, 0px));
       }
 
@@ -324,8 +319,8 @@
         background: linear-gradient(to bottom, #f6faff, #eef5ff);
         border: 4px solid #1c3047;
         border-radius: 18px;
-        overflow: hidden;
         box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
+        overflow: hidden;
       }
 
       .sandglass::before,
@@ -411,7 +406,6 @@
 
       .card-situation {
         margin: 0 0 12px;
-        color: var(--text);
         line-height: 1.5;
         font-size: 0.92rem;
       }
@@ -448,12 +442,6 @@
           grid-template-columns: 1fr;
         }
       }
-
-      @media (max-width: 720px) {
-        .board {
-          grid-template-columns: repeat(4, minmax(70px, 1fr));
-        }
-      }
     </style>
   </head>
   <body>
@@ -484,5 +472,119 @@
 
       <div class="layout">
         <div class="board-wrap">
-          <div class="board" id="board"></div>*
+          <div class="board" id="board"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <div class="sidebar">
+          <div class="panel">
+            <h3>Spieler</h3>
+            <div id="playerList" class="player-list"></div>
+          </div>
+
+          <div class="panel timer-panel">
+            <h3>Gesprächszeit</h3>
+            <div class="sandglass">
+              <div id="sandTop" class="sand-top"></div>
+              <div id="sandBottom" class="sand-bottom"></div>
+            </div>
+            <div id="timerDisplay" class="timer-display">10:00</div>
+            <div class="timer-note">maximal 10 Minuten pro Person</div>
+          </div>
+
+          <div class="card-box">
+            <span id="cardBadge" class="card-badge">Kategorie</span>
+            <div class="card-title" id="cardTitle">Noch keine Karte gezogen</div>
+            <p id="cardSituation" class="card-situation">
+              Die aktive Person zieht eine Karte und beschreibt, wie sie die Situation lösen würde.
+            </p>
+
+            <p id="cardQuestion" class="card-question">„So würde ich die Situation lösen.“</p>
+
+            <ul id="groupImpulses" class="group-impulses"></ul>
+
+            <div class="card-actions">
+              <button id="startTimerButton" class="small-btn" type="button">Zeit starten</button>
+              <button id="stopTimerButton" class="small-btn" type="button">Zeit stoppen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const categoryConfig = {
+        blue: {
+          label: "Kommunikation & Zusammenarbeit",
+          color: "#2f6fcb",
+          soft: "#dfeeff"
+        },
+        yellow: {
+          label: "Entscheidung & Verantwortung",
+          color: "#d9a92a",
+          soft: "#fff3d4"
+        },
+        green: {
+          label: "Selbstreflexion & Perspektivwechsel",
+          color: "#2f9e6f",
+          soft: "#dff5e8"
+        },
+        red: {
+          label: "Konflikte & schwierige Situationen",
+          color: "#d84d4d",
+          soft: "#ffe0e0"
+        }
+      };
+
+      const deck = [
+        {
+          category: "blue",
+          title: "Missverständnis im Team",
+          situation: "Eine getroffene Vereinbarung wird von mehreren Teammitgliedern unterschiedlich verstanden. Erst bei der Umsetzung wird deutlich, dass alle von etwas anderem ausgegangen sind.",
+          leadQuestion: "Wie würdest du als Führungskraft mit dieser Situation umgehen?",
+          impulses: [
+            "Wo könnte das Missverständnis entstanden sein?",
+            "Wie klärst du die Situation, ohne nach Schuldigen zu suchen?",
+            "Was könntest du zukünftig anders kommunizieren?"
+          ],
+          optionalRoleplay: "Eine Person übernimmt die Führungskraft, zwei Personen vertreten unterschiedliche Interpretationen der Vereinbarung."
+        },
+        {
+          category: "blue",
+          title: "Zustimmung ohne Umsetzung",
+          situation: "In einer Teamsitzung stimmen alle einer Entscheidung zu. Einige Wochen später stellst du fest, dass Teile des Teams die Vereinbarung nicht umgesetzt haben.",
+          leadQuestion: "Wie sprichst du die fehlende Umsetzung an?",
+          impulses: [
+            "Bedeutet Zustimmung automatisch Verbindlichkeit?",
+            "Woran erkennst du, ob wirklich ein gemeinsames Verständnis besteht?",
+            "Welche Verantwortung liegt bei der Führungskraft, welche beim Team?"
+          ]
+        },
+        {
+          category: "blue",
+          title: "Kritisches Feedback",
+          situation: "Ein Mitarbeitender äußert vor dem gesamten Team deutliche Kritik an einer deiner Entscheidungen.",
+          leadQuestion: "Wie reagierst du in diesem Moment?",
+          impulses: [
+            "Was sollte sofort geklärt werden und was später?",
+            "Wie kannst du Offenheit ermöglichen und gleichzeitig handlungsfähig bleiben?",
+            "Wie würdest du mit der Person anschließend weiterarbeiten?"
+          ]
+        },
+        {
+          category: "red",
+          title: "Offener Konflikt im Meeting",
+          situation: "Zwei Mitarbeitende geraten in einem Meeting in einen offenen Konflikt.",
+          leadQuestion: "Wie würdest du als Führungskraft in dieser Situation reagieren?",
+          impulses: [
+            "Welche unterschiedlichen Interessen sind erkennbar?",
+            "Was müsste sofort geklärt werden?",
+            "Welche alternative Vorgehensweise wäre möglich?"
+          ],
+          optionalRoleplay: "Eine Person übernimmt die Führungskraft, zwei weitere Personen vertreten die Konfliktparteien."
+        },
+        {
+          category: "red",
+          title: "Wiederholt nicht eingehaltene Vereinbarung",
+          situation: "Mit einem Mitarbeitenden wurden bereits mehrfach konkrete Vereinbarungen getroffen. Trotzdem werden diese wiederholt nicht eingehalten.",](#)*
 
