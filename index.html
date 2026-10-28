@@ -774,9 +774,9 @@
       }
 
       function getBoardColor(index) {
-        if (index === 0) return "#dfeeff";
-        if (index === boardOrder.length - 1) return "#fff3d4";
-        return categoryConfig[boardOrder[index]].soft;
+        if (index === 0) return "#dfeeff"; // Start
+        if (index === boardOrder.length - 1) return "#fff3d4"; // Ziel
+        return categoryConfig[boardOrder[index]].color;
       }
 
       function getBoardTitle(index) {
@@ -941,7 +941,6 @@
           clearInterval(timerInterval);
           timerInterval = null;
         }
-
         sandTop.style.height = "46%";
         sandBottom.style.height = "46%";
         timerDisplay.textContent = "10:00";
