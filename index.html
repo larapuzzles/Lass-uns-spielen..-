@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Management-Spielbrett</title>
+    <title>Leadership Board</title>
     <style>
       :root {
         --bg: #edf2f7;
@@ -14,29 +14,37 @@
         --muted: #667085;
         --shadow: rgba(15, 23, 42, 0.09);
         --board-bg: #eef3f8;
+        --primary: #1f4e79;
+        --success: #2db38f;
+        --warning: #f29c3d;
+        --danger: #e85b7d;
       }
 
       * {
         box-sizing: border-box;
       }
 
-      body {
+      html, body {
         margin: 0;
         min-height: 100vh;
-        display: grid;
-        place-items: center;
+        font-family: "Segoe UI", Arial, sans-serif;
         background: linear-gradient(135deg, #edf3fb, #f5f7fa);
         color: var(--text);
-        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
       }
 
       .app {
-        width: min(92vw, 980px);
+        width: min(96vw, 1200px);
         background: var(--panel);
         border: 1px solid var(--border);
         border-radius: 28px;
         box-shadow: 0 20px 45px var(--shadow);
-        padding: 24px;
+        padding: 20px;
       }
 
       .topbar {
@@ -44,13 +52,13 @@
         justify-content: space-between;
         align-items: center;
         gap: 16px;
-        margin-bottom: 22px;
+        margin-bottom: 18px;
         flex-wrap: wrap;
       }
 
       .title-group h1 {
         margin: 0;
-        font-size: clamp(1.5rem, 2vw, 2.1rem);
+        font-size: clamp(1.6rem, 2.2vw, 2.3rem);
         letter-spacing: 0.02em;
       }
 
@@ -72,8 +80,7 @@
         color: var(--muted);
       }
 
-      select,
-      button {
+      select, button {
         border-radius: 12px;
         border: 1px solid var(--border);
         padding: 10px 14px;
@@ -107,7 +114,7 @@
         border: 1px solid var(--border);
         border-radius: 16px;
         padding: 14px 18px;
-        margin-bottom: 22px;
+        margin-bottom: 18px;
         flex-wrap: wrap;
       }
 
@@ -125,6 +132,12 @@
         font-weight: 700;
       }
 
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(420px, 2fr) minmax(280px, 1fr);
+        gap: 18px;
+      }
+
       .board-wrap {
         background: var(--board-bg);
         border: 1px solid var(--border);
@@ -134,7 +147,7 @@
 
       .board {
         display: grid;
-        grid-template-columns: repeat(6, minmax(75px, 1fr));
+        grid-template-columns: repeat(6, minmax(70px, 1fr));
         gap: 12px;
       }
 
@@ -177,22 +190,19 @@
       }
 
       .tile-content small {
-        font-size: 0.58rem;
+        font-size: 0.56rem;
         letter-spacing: 0.06em;
         text-transform: uppercase;
       }
 
       .tile-content strong {
-        font-size: clamp(0.56rem, 1vw, 0.78rem);
+        font-size: clamp(0.56rem, 1vw, 0.82rem);
         line-height: 1.1;
       }
 
       .tokens {
         position: absolute;
         inset: 0;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
         pointer-events: none;
       }
 
@@ -201,7 +211,7 @@
         width: 22px;
         height: 22px;
         border-radius: 50%;
-        border: 3px solid rgba(255, 255, 255, 0.95);
+        border: 3px solid rgba(255,255,255,0.95);
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
         display: flex;
         align-items: center;
@@ -209,6 +219,7 @@
         font-size: 0.62rem;
         color: white;
         font-weight: 700;
+        transform: translateX(var(--token-offset, 0px));
       }
 
       .legend {
@@ -237,11 +248,198 @@
         display: inline-block;
       }
 
-      @media (max-width: 720px) {
-        .app {
-          padding: 18px;
-        }
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
+      .panel {
+        background: var(--panel-strong);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px;
+      }
+
+      .panel h3 {
+        margin: 0 0 12px;
+        font-size: 1rem;
+      }
+
+      .player-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .player-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+
+      .player-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .player-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        border: 2px solid rgba(255,255,255,0.8);
+      }
+
+      .player-item.active {
+        border-color: rgba(31, 78, 121, 0.5);
+        background: #eef5ff;
+      }
+
+      .timer-panel {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sandglass {
+        position: relative;
+        width: 120px;
+        height: 155px;
+        margin: 8px auto 12px auto;
+        background: linear-gradient(to bottom, #f6faff, #eef5ff);
+        border: 4px solid #1c3047;
+        border-radius: 18px;
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
+        overflow: hidden;
+      }
+
+      .sandglass::before,
+      .sandglass::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 72%;
+        height: 24%;
+        background: rgba(30, 64, 175, 0.08);
+      }
+
+      .sandglass::before {
+        top: 8px;
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      }
+
+      .sandglass::after {
+        bottom: 8px;
+        clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+      }
+
+      .sand-top,
+      .sand-bottom {
+        position: absolute;
+        left: 13px;
+        right: 13px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(255, 184, 77, 0.9), rgba(245, 122, 58, 0.9));
+        transition: height 0.2s ease;
+      }
+
+      .sand-top {
+        top: 10px;
+        height: 40%;
+        clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      }
+
+      .sand-bottom {
+        bottom: 10px;
+        height: 40%;
+        clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+      }
+
+      .timer-display {
+        text-align: center;
+        font-size: clamp(1.2rem, 2vw, 1.7rem);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        color: var(--primary);
+      }
+
+      .timer-note {
+        text-align: center;
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .card-box {
+        background: linear-gradient(180deg, #fff, #f8fbff);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px;
+      }
+
+      .card-category {
+        display: inline-block;
+        background: rgba(31, 78, 121, 0.08);
+        color: var(--primary);
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .card-title {
+        margin: 12px 0 8px;
+        font-size: 1.08rem;
+        font-weight: 700;
+      }
+
+      .card-situation {
+        margin: 0 0 12px;
+        color: var(--text);
+        line-height: 1.5;
+        font-size: 0.92rem;
+      }
+
+      .card-question {
+        margin: 0;
+        color: var(--primary);
+        font-weight: 700;
+        line-height: 1.45;
+        font-size: 0.9rem;
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      .small-btn {
+        flex: 1 1 120px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 920px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
         .board {
           grid-template-columns: repeat(4, minmax(70px, 1fr));
         }
@@ -264,6 +462,8 @@
             <option value="6">6 Personen</option>
           </select>
           <button id="rollButton" type="button">Würfeln</button>
+          <button id="drawCardButton" type="button">Karte ziehen</button>
+          <button id="nextTurnButton" type="button">Nächster Spieler</button>
         </div>
       </div>
 
@@ -272,9 +472,40 @@
         <div class="dice-display" id="diceDisplay">Würfel: –</div>
       </div>
 
-      <div class="board-wrap">
-        <div class="board" id="board"></div>
-        <div class="legend" id="legend"></div>
+      <div class="layout">
+        <div class="board-wrap">
+          <div class="board" id="board"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+
+        <div class="sidebar">
+          <div class="panel">
+            <h3>Spieler</h3>
+            <div id="playerList" class="player-list"></div>
+          </div>
+
+          <div class="panel timer-panel">
+            <h3>Gesprächszeit</h3>
+            <div class="sandglass">
+              <div id="sandTop" class="sand-top"></div>
+              <div id="sandBottom" class="sand-bottom"></div>
+            </div>
+            <div id="timerDisplay" class="timer-display">10:00</div>
+            <div class="timer-note">maximal 10 Minuten pro Person</div>
+          </div>
+
+          <div class="card-box">
+            <span id="cardCategory" class="card-category">Kategorie</span>
+            <div class="card-title" id="cardTitle">Noch keine Karte gezogen</div>
+            <p id="cardSituation" class="card-situation">Die aktive Person zieht eine Karte und beschreibt, wie sie die Situation lösen würde.</p>
+            <p id="cardQuestion" class="card-question">„So würde ich die Situation lösen.“</p>
+
+            <div class="card-actions">
+              <button id="startTimerButton" class="small-btn" type="button">Zeit starten</button>
+              <button id="stopTimerButton" class="small-btn" type="button">Zeit stoppen</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -285,9 +516,21 @@
       const diceDisplay = document.getElementById("diceDisplay");
       const playerCountSelect = document.getElementById("playerCount");
       const rollButton = document.getElementById("rollButton");
+      const drawCardButton = document.getElementById("drawCardButton");
+      const nextTurnButton = document.getElementById("nextTurnButton");
+      const playerList = document.getElementById("playerList");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const sandTop = document.getElementById("sandTop");
+      const sandBottom = document.getElementById("sandBottom");
+      const cardCategory = document.getElementById("cardCategory");
+      const cardTitle = document.getElementById("cardTitle");
+      const cardSituation = document.getElementById("cardSituation");
+      const cardQuestion = document.getElementById("cardQuestion");
+      const startTimerButton = document.getElementById("startTimerButton");
+      const stopTimerButton = document.getElementById("stopTimerButton");
 
       const fieldTypes = [
-        { name: "Strategie", short: "Strategie", color: "#dfeaf8" },
+        { name: "Führung", short: "Führung", color: "#dfeaf8" },
         { name: "Team", short: "Team", color: "#d9f1e9" },
         { name: "KPI", short: "KPI", color: "#fbe7c7" },
         { name: "Innovation", short: "Innov.", color: "#f7d9e5" },
@@ -312,18 +555,172 @@
         14, 8, 7, 13, 19, 25, 31, 30, 24, 18, 12, 6
       ];
 
+      // Kartenbasis: mit Kategorien und Führungssituationen
+      const fullDeck = [
+        {
+          category: "Führung & Verantwortung",
+          title: "Urlaub nach Rückkehr",
+          situation: "Elfriede Weg kommt aus dem Urlaub zurück. Während ihrer Abwesenheit blieben mehrere wichtige Aufgaben liegen. Sie meldet sich nicht aktiv zurück und wirkt zurückgezogen.",
+          question: "Wie reagiert die Führungskraft auf die Rückkehr, ohne die Verantwortung zu verwässern und die Situation trotzdem professionell zu begleiten?"
+        },
+        {
+          category: "Führung & Verantwortung",
+          title: "Delegation ohne Vertrauen",
+          situation: "Martin Lenz verteilt Aufgaben, kontrolliert alles aber selbst bis ins kleinste Detail. Die Mitarbeitenden fühlen sich entmündigt und vermeiden Eigeninitiative.",
+          question: "Wie schafft die Führungskraft mehr Selbstständigkeit, ohne die Verantwortung zu verlieren?"
+        },
+        {
+          category: "Führung & Verantwortung",
+          title: "Entscheidungen verschieben",
+          situation: "Stefan Neumann verschiebt wichtige Entscheidungen immer weiter, weil er Angst vor Fehlern hat. Das Team spürt die Unklarheit.",
+          question: "Wie kann die Führungskraft ihn dazu bringen, Verantwortung zu übernehmen und Entscheidungen gezielt zu treffen?"
+        },
+        {
+          category: "Kommunikation & Feedback",
+          title: "Allgemeines Lob statt konkretes Feedback",
+          situation: "Ein Teammitglied hat eine Präsentation vorbereitet und bekommt nur das Feedback: „Gut gemacht.“ Es gibt aber viele konkrete Verbesserungspotenziale.",
+          question: "Wie formuliert die Führungskraft hilfreiches und konkretes Feedback, das die Leistung verbessert?"
+        },
+        {
+          category: "Kommunikation & Feedback",
+          title: "Kritik im Teammeeting",
+          situation: "Julia wird im Teammeeting öffentlich kritisiert. Sie reagiert defensiv und fühlt sich gedemütigt.",
+          question: "Wie geht die Führungskraft mit Kritik im öffentlichen Rahmen um, ohne die Würde des Mitarbeiters zu verletzen?"
+        },
+        {
+          category: "Kommunikation & Feedback",
+          title: "Stille im Meeting",
+          situation: "In einem Meeting sprechen immer dieselben Personen. Andere Mitarbeitende bleiben still, obwohl sie wichtige Informationen hätten.",
+          question: "Wie moderiert die Führungskraft das Gespräch so, dass alle Sichtweisen sichtbar werden?"
+        },
+        {
+          category: "Konflikte & schwierige Gespräche",
+          title: "Konflikt zwischen zwei Teams",
+          situation: "Zwei Abteilungen arbeiten an einem Projekt, aber sie haben unterschiedliche Meinungen über Rollen, Verantwortung und Prioritäten. Jede Seite fühlt sich benachteiligt.",
+          question: "Wie schafft die Führungskraft eine gemeinsame Grundlage, ohne eine Seite zu bevorzugen?"
+        },
+        {
+          category: "Konflikte & schwierige Gespräche",
+          title: "Leistungsrückstand offen ansprechen",
+          situation: "Ein Mitarbeiter erreicht die Ziele nicht, obwohl er fachlich sehr qualifiziert ist. Im Gespräch reagiert er defensiv und verweist auf Überlastung.",
+          question: "Wie spricht die Führungskraft die Leistung und Verantwortung an, ohne den Mitarbeiter zu demotivieren?"
+        },
+        {
+          category: "Konflikte & schwierige Gespräche",
+          title: "Eskalation im Meeting",
+          situation: "Ein Mitarbeiter äußert sich im Teammeeting sehr direkt und verletzt dabei andere Mitarbeitende. Die Situation wird laut und emotional.",
+          question: "Wie stoppt die Führungskraft die Eskalation und führt die Gruppe wieder in den sachlichen Rahmen zurück?"
+        },
+        {
+          category: "Teamdynamik & Motivation",
+          title: "Motivationsverlust",
+          situation: "Ein sehr qualifizierter Mitarbeiter zeigt vollständigen Rückzug. Er arbeitet nur noch minimum und wirkt emotional abwesend.",
+          question: "Wie erkennt die Führungskraft die Ursache und welche erste Gesprächsmaßnahme setzt sie?"
+        },
+        {
+          category: "Teamdynamik & Motivation",
+          title: "Team arbeitet effizient, aber ohne Zusammenhalt",
+          situation: "Die Mitarbeiter erledigen ihre Aufgaben, aber sie arbeiten isoliert und teilen kaum Informationen. Der Teamzusammenhalt ist schwach.",
+          question: "Wie schafft die Führungskraft einen Teamzusammenhalt, ohne das Arbeitstempo zu bremsen?"
+        },
+        {
+          category: "Teamdynamik & Motivation",
+          title: "Neue Person im Team",
+          situation: "Eine neue Kollegin kommt in das Team. Sie ist sehr stark, andere Teammitglieder fühlen sich dadurch herausgefordert und reagieren defensiv.",
+          question: "Wie baut die Führungskraft eine respektvolle Teamdynamik auf, ohne Konkurrenz zu fördern?"
+        },
+        {
+          category: "Veränderung & Transformation",
+          title: "Neue Strategie, wenig Akzeptanz",
+          situation: "Die Organisation verändert ihre Strategie. Viele Mitarbeitende sehen darin vor allem Mehrarbeit und weniger Sinn.",
+          question: "Wie zeigt die Führungskraft die Bedeutung der Veränderung und schafft Vertrauen im Team?"
+        },
+        {
+          category: "Veränderung & Transformation",
+          title: "Restrukturierung",
+          situation: "Die Organisation wird restrukturiert, und einige Mitarbeiter müssen in neue Verantwortungen. Die Unsicherheit ist hoch.",
+          question: "Wie kommuniziert die Führungskraft die Veränderung so, dass Klarheit und Sicherheit entstehen?"
+        },
+        {
+          category: "Veränderung & Transformation",
+          title: "Digitalisierungsprojekt",
+          situation: "Ein neues digitales System soll eingeführt werden. Die Mitarbeitenden sehen darin vor allem Zusatzarbeit und wenig Nutzen.",
+          question: "Wie kann die Führungskraft die Veränderung so einführen, dass sie unterstützt statt abgelehnt wird?"
+        },
+        {
+          category: "Entscheidungen & Priorisierung",
+          title: "Mehrere Projekte, keine Kapazitäten",
+          situation: "Drei wichtige Projekte laufen gleichzeitig. Es gibt nicht genügend Ressourcen, und das Team ist am Limit.",
+          question: "Welche Entscheidung trifft die Führungskraft, um Prioritäten klar zu machen?"
+        },
+        {
+          category: "Entscheidungen & Priorisierung",
+          title: "Budgetkürzungen",
+          situation: "Plötzlich werden Budgetmittel gekürzt. Viele Projekte sind betroffen, und das Team reagiert mit Frust.",
+          question: "Wie kommuniziert die Führungskraft die Entscheidung ehrlich und respektvoll?"
+        },
+        {
+          category: "Entscheidungen & Priorisierung",
+          title: "Entscheidung ohne vollständige Daten",
+          situation: "Ein wichtiges Projekt muss in zwei Wochen entschieden werden, aber die Daten sind unvollständig. Das Risiko ist hoch.",
+          question: "Wie geht die Führungskraft mit Unsicherheit um, ohne den Entscheidungsprozess zu blockieren?"
+        },
+        {
+          category: "Leistung & Mitarbeiterentwicklung",
+          title: "Leistung fällt trotz hohem Potenzial",
+          situation: "Ein Mitarbeiter ist fachlich sehr stark, aber seine Leistungen bleiben hinter den Erwartungen zurück. Die Führungskraft erkennt das zu spät.",
+          question: "Wie adressiert die Führungskraft die Leistung und die Entwicklungschancen?"
+        },
+        {
+          category: "Leistung & Mitarbeiterentwicklung",
+          title: "Mitarbeiter will aufsteigen",
+          situation: "Ein engagierter Mitarbeiter möchte mehr Verantwortung übernehmen, aber das Team braucht ihn noch in seiner aktuellen Rolle.",
+          question: "Wie gestaltet die Führungskraft die nächsten Entwicklungsschritte fair und konkret?"
+        },
+        {
+          category: "Leistung & Mitarbeiterentwicklung",
+          title: "Leistung wird subjektiv bewertet",
+          situation: "Die Mitarbeitenden erleben die Leistungseinschätzung als unklar und subjektiv. Sie fragen nach nachvollziehbaren Kriterien.",
+          question: "Wie schafft die Führungskraft klare, nachvollziehbare Leistungsbenchmarks?"
+        },
+        {
+          category: "Krise, Stakeholder & Verhandlung",
+          title: "Projekt droht zu scheitern",
+          situation: "Ein wichtiges Projekt steht kurz vor dem Ausfall. Das Team ist verunsichert und der Druck steigt.",
+          question: "Wie führt die Führungskraft das Team durch die Krise und welche Entscheidung ist jetzt vorrangig?"
+        },
+        {
+          category: "Krise, Stakeholder & Verhandlung",
+          title: "Reputationsrisiko",
+          situation: "Ein Fehler in einem Kundenprojekt wird öffentlich sichtbar. Das Unternehmen steht im Ruf einer Nachlässigkeit.",
+          question: "Wie kommuniziert die Führungskraft die Lage ehrlich und verantwortungsvoll mit den betroffenen Stakeholdern?"
+        },
+        {
+          category: "Krise, Stakeholder & Verhandlung",
+          title: "Vorstand verlangt schnelle Ergebnisse",
+          situation: "Der Vorstand erwartet kurzfristige Ergebnisse, obwohl die Teammitglieder eine realistische Umsetzung brauchen, um Qualität zu sichern.",
+          question: "Wie argumentiert die Führungskraft gegen unrealistische Erwartungen, ohne die Beziehung zu gefährden?"
+        }
+      ];
+
       let players = [];
       let currentPlayerIndex = 0;
       let currentDice = null;
+      let deck = [];
+      let currentCard = null;
+      let timerInterval = null;
+      let timerEndTime = 0;
+      let timerRunning = false;
 
-      function getFieldForTrackIndex(index) {
-        const type = fieldTypes[index % fieldTypes.length];
-        const label = type.short;
+      const MAX_TIME_MS = 10 * 60 * 1000;
 
-        if (index === 0) return { name: "Start", short: "Start", color: "#eef3f9" };
-        if (index === track.length - 1) return { name: "Ziel", short: "Ziel", color: "#e7f2d0" };
-
-        return { ...type, short: label };
+      function shuffle(array) {
+        const copy = [...array];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
       }
 
       function createLegend() {
@@ -348,87 +745,203 @@
         }));
         currentPlayerIndex = 0;
         currentDice = null;
+        deck = shuffle(fullDeck);
+        currentCard = null;
+        resetCardPanel();
+        stopTimer();
         statusText.textContent = `${players[0].name} ist am Zug`;
         diceDisplay.textContent = "Würfel: –";
         renderBoard();
+        renderPlayers();
+      }
+
+      function renderPlayers() {
+        playerList.innerHTML = "";
+        players.forEach((player, index) => {
+          const item = document.createElement("div");
+          item.className = `player-item ${index === currentPlayerIndex ? "active" : ""}`;
+          item.innerHTML = `
+            <div class="player-meta">
+              <span class="player-dot" style="background:${player.color}"></span>
+              <span>${player.name}</span>
+            </div>
+            <strong>Feld ${player.position + 1}</strong>
+          `;
+          playerList.appendChild(item);
+        });
+      }
+
+      function getTileLabel(index) {
+        if (index === 0) return "Start";
+        if (index === track.length - 1) return "Ziel";
+        const field = fieldTypes[index % fieldTypes.length];
+        return field.short;
       }
 
       function renderBoard() {
         board.innerHTML = "";
 
         track.forEach((gridIndex, pathIndex) => {
-          const field = getFieldForTrackIndex(pathIndex);
+          const field = fieldTypes[pathIndex % fieldTypes.length];
           const tile = document.createElement("div");
           tile.className = "tile";
           tile.style.background = field.color;
 
-          if (pathIndex === players[currentPlayerIndex]?.position) {
+          const isCurrentPlayersPosition =
+            players[currentPlayerIndex] &&
+            players[currentPlayerIndex].position === pathIndex;
+
+          if (isCurrentPlayersPosition) {
             tile.classList.add("active");
           }
 
-          const tokens = players
+          const tokensOnField = players
             .filter((player) => player.position === pathIndex)
             .map((player, index) => {
-              const offset = players.filter((p) => p.position === pathIndex).length > 1 ? index : 0;
-              const xOffset = players.filter((p) => p.position === pathIndex).length === 1 ? 0 : offset * 12 - 12;
+              const count = players.filter((p) => p.position === pathIndex).length;
+              const offset = count > 1 ? index * 12 - ((count - 1) * 12) / 2 : 0;
               return `
                 <div
                   class="token"
-                  style="background:${player.color}; left: 50%; transform: translateX(${xOffset}px); bottom: 10px;"
-                >
-                  ${player.id}
-                </div>
+                  style="background:${player.color}; left: 50%; bottom: 10px; --token-offset: ${offset}px;"
+                >${player.id}</div>
               `;
             })
             .join("");
 
           tile.innerHTML = `
             <div class="tile-content">
-              <small>${field.name === "Start" || field.name === "Ziel" ? "" : "Feld"}</small>
-              <strong>${field.short}</strong>
+              <small>${pathIndex === 0 || pathIndex === track.length - 1 ? "" : "Feld"}</small>
+              <strong>${getTileLabel(pathIndex)}</strong>
             </div>
-            <div class="tokens">${tokens}</div>
+            <div class="tokens">${tokensOnField}</div>
           `;
-
-          tile.addEventListener("click", () => {
-            const selectedPlayer = players[currentPlayerIndex];
-            if (!selectedPlayer) return;
-            const clickedPosition = pathIndex;
-            if (clickedPosition <= selectedPlayer.position) {
-              statusText.textContent = `${selectedPlayer.name} hat dieses Feld bereits erreicht`;
-            } else {
-              statusText.textContent = `${selectedPlayer.name} hat ${clickedPosition - selectedPlayer.position} Schritte gewählt`;
-            }
-          });
 
           board.appendChild(tile);
         });
+
+        renderPlayers();
       }
 
-      function advanceCurrentPlayer() {
-        const player = players[currentPlayerIndex];
+      function getActivePlayer() {
+        return players[currentPlayerIndex];
+      }
+
+      function rollDice() {
+        const player = getActivePlayer();
         if (!player) return;
 
-        const steps = Math.floor(Math.random() * 6) + 1;
-        currentDice = steps;
+        const result = Math.floor(Math.random() * 6) + 1;
+        currentDice = result;
+        const nextPos = Math.min(player.position + result, track.length - 1);
+        player.position = nextPos;
 
-        const nextPosition = Math.min(player.position + steps, track.length - 1);
-        player.position = nextPosition;
+        diceDisplay.textContent = `Würfel: ${result}`;
+        statusText.textContent = `${player.name} zieht ${result} Felder und bewegt sich auf Feld ${nextPos + 1}`;
 
-        diceDisplay.textContent = `Würfel: ${steps}`;
-
-        // Wenn am Ende angekommen
-        if (nextPosition >= track.length - 1) {
+        if (nextPos >= track.length - 1) {
           statusText.textContent = `${player.name} hat das Ziel erreicht!`;
-        } else {
-          statusText.textContent = `${player.name} bewegt sich um ${steps} Felder`;
         }
 
         renderBoard();
+      }
 
-        // Nächsten Spieler aktivieren
+      function resetCardPanel() {
+        cardCategory.textContent = "Kategorie";
+        cardTitle.textContent = "Noch keine Karte gezogen";
+        cardSituation.textContent = "Die aktive Person zieht eine Karte und beschreibt, wie sie die Situation lösen würde.";
+        cardQuestion.textContent = "„So würde ich die Situation lösen.“";
+      }
+
+      function drawCard() {
+        const player = getActivePlayer();
+        if (!player) return;
+
+        if (deck.length === 0) {
+          deck = shuffle(fullDeck);
+        }
+
+        currentCard = deck.pop();
+
+        if (!currentCard) {
+          resetCardPanel();
+          return;
+        }
+
+        cardCategory.textContent = currentCard.category;
+        cardTitle.textContent = currentCard.title;
+        cardSituation.textContent = currentCard.situation;
+        cardQuestion.textContent = currentCard.question;
+
+        statusText.textContent = `${player.name} zieht die Karte: ${currentCard.title}`;
+        renderBoard();
+      }
+
+      function formatTime(ms) {
+        const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      function updateSandglass() {
+        const remaining = Math.max(0, timerEndTime - Date.now());
+        const ratio = remaining / MAX_TIME_MS;
+
+        const topHeight = Math.max(0, ratio * 46);
+        const bottomHeight = Math.max(0, (1 - ratio) * 46);
+
+        sandTop.style.height = `${topHeight}%`;
+        sandBottom.style.height = `${bottomHeight}%`;
+
+        timerDisplay.textContent = formatTime(remaining);
+
+        if (remaining <= 0) {
+          stopTimer();
+          statusText.textContent = `${getActivePlayer().name} hat die Zeit für die Gesprächssituation erreicht.`;
+        }
+      }
+
+      function startTimer() {
+        if (!currentCard) {
+          return;
+        }
+
+        stopTimer();
+        timerEndTime = Date.now() + MAX_TIME_MS;
+        timerRunning = true;
+
+        updateSandglass();
+        timerInterval = setInterval(updateSandglass, 250);
+      }
+
+      function stopTimer() {
+        timerRunning = false;
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+
+        const remaining = MAX_TIME_MS;
+        sandTop.style.height = "46%";
+        sandBottom.style.height = "46%";
+        timerDisplay.textContent = "10:00";
+      }
+
+      function nextTurn() {
+        const player = getActivePlayer();
+        if (player) {
+          statusText.textContent = `${player.name} hat die Diskussion abgeschlossen.`;
+        }
+
+        stopTimer();
+
         currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
-        statusText.textContent = `${players[currentPlayerIndex].name} ist am Zug`;
+        const nextPlayer = getActivePlayer();
+        statusText.textContent = `${nextPlayer.name} ist am Zug`;
+        diceDisplay.textContent = "Würfel: –";
+        resetCardPanel();
+        renderBoard();
       }
 
       playerCountSelect.addEventListener("change", (event) => {
@@ -437,11 +950,36 @@
       });
 
       rollButton.addEventListener("click", () => {
-        advanceCurrentPlayer();
+        const player = getActivePlayer();
+        if (!player) return;
+
+        rollDice();
+        renderPlayers();
+      });
+
+      drawCardButton.addEventListener("click", () => {
+        const player = getActivePlayer();
+        if (!player) return;
+
+        drawCard();
+        renderPlayers();
+      });
+
+      nextTurnButton.addEventListener("click", () => {
+        nextTurn();
+      });
+
+      startTimerButton.addEventListener("click", () => {
+        startTimer();
+      });
+
+      stopTimerButton.addEventListener("click", () => {
+        stopTimer();
+        statusText.textContent = `${getActivePlayer().name} hat die Zeit gestoppt.`;
       });
 
       createLegend();
       setupPlayers(4);
     </script>
   </body>
-</html>
+  </html>
