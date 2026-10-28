@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Career Board – Pfad-Layout</title>
+    <title>Premium Career Board – Straßenweg im Unternehmen</title>
     <style>
       :root {
         --bg: #eef3fb;
@@ -15,23 +15,14 @@
         --shadow: rgba(15, 23, 42, 0.09);
 
         --blue: #2f6fcb;
-        --blue-soft: #dfeeff;
         --yellow: #d9a92a;
-        --yellow-soft: #fff3d4;
         --green: #2f9e6f;
-        --green-soft: #dff5e8;
         --red: #d84d4d;
+
+        --blue-soft: #dfeeff;
+        --yellow-soft: #fff3d4;
+        --green-soft: #dff5e8;
         --red-soft: #ffe0e0;
-        --purple: #7b5de8;
-        --purple-soft: #efe7ff;
-        --teal: #1ea7a4;
-        --teal-soft: #dffaf7;
-        --orange: #ef8b3d;
-        --orange-soft: #fff1df;
-        --rose: #e9638c;
-        --rose-soft: #ffe5ee;
-        --slate: #52677d;
-        --slate-soft: #edf1f5;
 
         --primary: #183d63;
         --dark: #1d2430;
@@ -165,27 +156,32 @@
       .board {
         position: relative;
         width: 100%;
-        height: 560px;
+        height: 760px;
+        min-height: 760px;
         border-radius: 24px;
+        overflow: hidden;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.15)),
+          linear-gradient(135deg, #eef5ff, #f8f9fd);
       }
 
       .tile {
         position: absolute;
-        width: 116px;
-        height: 116px;
+        width: 118px;
+        height: 118px;
         border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.8);
+        border: 1px solid rgba(255,255,255,0.9);
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.05);
+        box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.05), 0 6px 18px rgba(15, 23, 42, 0.08);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
       }
 
       .tile:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 12px 20px rgba(15, 23, 42, 0.12);
       }
 
       .tile.active {
@@ -203,12 +199,12 @@
         gap: 6px;
         text-align: center;
         font-weight: 800;
-        color: rgba(17, 24, 39, 0.77);
+        color: rgba(17, 24, 39, 0.75);
         padding: 8px;
       }
 
       .tile-content strong {
-        font-size: clamp(0.56rem, 0.9vw, 0.8rem);
+        font-size: clamp(0.58rem, 0.9vw, 0.8rem);
         line-height: 1.15;
       }
 
@@ -216,6 +212,38 @@
         font-size: 0.48rem;
         letter-spacing: 0.07em;
         text-transform: uppercase;
+      }
+
+      .special-room {
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0.15)),
+          linear-gradient(135deg, #edf3fb, #dfeaf7);
+      }
+
+      .start-room {
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.75), rgba(255,255,255,0.15)),
+          linear-gradient(135deg, #eef2f7, #dfeaf5);
+      }
+
+      .end-room {
+        background:
+          linear-gradient(135deg, rgba(255,255,255,0.75), rgba(255,255,255,0.15)),
+          linear-gradient(135deg, #e4f4ec, #d8f1e2);
+      }
+
+      .room-people {
+        display: flex;
+        gap: 4px;
+        margin-top: 4px;
+      }
+
+      .room-person {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(24, 61, 99, 0.7);
+        display: inline-block;
       }
 
       .tokens {
@@ -454,12 +482,12 @@
       }
 
       @media (max-width: 1100px) {
-        .tile {
-          width: 94px;
-          height: 94px;
-        }
         .board {
-          height: 500px;
+          height: 700px;
+        }
+        .tile {
+          width: 100px;
+          height: 100px;
         }
       }
 
@@ -692,77 +720,80 @@
         "#5d7c8b"
       ];
 
-      const palette = [
-        "#2f6fcb", "#d9a92a", "#2f9e6f", "#d84d4d",
-        "#7b5de8", "#1ea7a4", "#ef8b3d", "#e9638c"
-      ];
+      const palette = ["#2f6fcb", "#d9a92a", "#2f9e6f", "#d84d4d"];
+      const boardCols = 4;
+      const boardRows = 6;
+      const boardCount = boardCols * boardRows;
+      const tileWidth = 114;
+      const tileHeight = 114;
+      const gap = 20;
+      const startX = 60;
+      const startY = 60;
 
-      const boardLabels = [
-        "Bewerbung", "Portfolio", "Kontakt", "Screening",
-        "CV Check", "Telefon", "Vorstellung", "Assessment",
-        "Case", "Perspektive", "Fitcheck", "Interview",
-        "Feedback", "Offer", "Vertrag", "Onboarding",
-        "Team", "Führung", "Start", "Mission",
-        "Zielbild", "Eintritt", "Integration", "Erfolg"
-      ];
+      function shuffle(array) {
+        const copy = [...array];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
 
-      const count = 24;
-      const tilePositions = [
-        { x: 65, y: 60 },
-        { x: 220, y: 60 },
-        { x: 375, y: 60 },
-        { x: 530, y: 60 },
-        { x: 530, y: 190 },
-        { x: 375, y: 190 },
-        { x: 220, y: 190 },
-        { x: 65, y: 190 },
-        { x: 65, y: 320 },
-        { x: 220, y: 320 },
-        { x: 375, y: 320 },
-        { x: 530, y: 320 },
-        { x: 530, y: 450 },
-        { x: 375, y: 450 },
-        { x: 220, y: 450 },
-        { x: 65, y: 450 },
-        { x: 65, y: 200 },
-        { x: 220, y: 200 },
-        { x: 375, y: 200 },
-        { x: 530, y: 200 },
-        { x: 530, y: 100 },
-        { x: 375, y: 100 },
-        { x: 220, y: 100 },
-        { x: 65, y: 100 }
-      ];
+      function getCell(index) {
+        const row = Math.floor(index / boardCols);
+        const colRaw = index % boardCols;
+        const col = row % 2 === 0 ? colRaw : boardCols - 1 - colRaw;
+        return { row, col };
+      }
 
-      function generateBoardColors() {
-        const board = new Array(count).fill(null);
+      function isValidColor(index, color) {
+        const { row, col } = getCell(index);
 
-        function isValid(index, color) {
-          const rowPrev = index - 1;
-          const rowAbove = index - 4;
+        const leftIndex = row * boardCols + (col - 1);
+        const upperIndex = (row - 1) * boardCols + col;
 
-          if (rowPrev >= 0 && board[rowPrev] === color) return false;
-          if (rowAbove >= 0 && board[rowAbove] === color) return false;
+        if (col > 0 && row % 2 === 0 && boardColors[leftIndex] === color) return false;
+        if (col > 0 && row % 2 === 1 && boardColors[(row * boardCols) + (col + 1)] === color) return false;
 
-          return true;
+        if (row > 0) {
+          const upperCell = getCell((row - 1) * boardCols + (row % 2 === 0 ? col : (boardCols - 1 - col)));
+          const upperIndexActual = upperCell.row * boardCols + upperCell.col;
+          if (boardColors[upperIndexActual] === color) return false;
         }
 
-        function backtrack(i) {
-          if (i >= count) return true;
+        return true;
+      }
+
+      function generateBoardColors() {
+        const colors = Array(boardCount).fill(null);
+
+        function backtrack(index) {
+          if (index >= boardCount) return true;
 
           const options = shuffle([...palette]);
+
           for (const color of options) {
-            if (isValid(i, color)) {
-              board[i] = color;
-              if (backtrack(i + 1)) return true;
-              board[i] = null;
+            if (index === 0 || index === boardCount - 1) {
+              if (backtrack(index + 1)) return true;
+              continue;
+            }
+
+            if (isValidColor(index, color)) {
+              colors[index] = color;
+              if (backtrack(index + 1)) return true;
+              colors[index] = null;
             }
           }
           return false;
         }
 
         backtrack(0);
-        return board;
+
+        // Start and end are special rooms and not part of color randomness
+        colors[0] = null;
+        colors[boardCount - 1] = null;
+
+        return colors;
       }
 
       const boardColors = generateBoardColors();
@@ -843,41 +874,91 @@
         });
       }
 
+      function getTileLabel(index) {
+        const labels = [
+          "Bewerbung", "Portfolio", "Kontakt", "Screening",
+          "CV Check", "Telefon", "Vorstellung", "Assessment",
+          "Case", "Perspektive", "Fitcheck", "Interview",
+          "Feedback", "Offer", "Vertrag", "Onboarding",
+          "Team", "Führung", "Start", "Mission",
+          "Zielbild", "Eintritt", "Integration", "Erfolg"
+        ];
+        return labels[index];
+      }
+
+      function getTilePosition(index) {
+        const row = Math.floor(index / boardCols);
+        const colRaw = index % boardCols;
+        const col = row % 2 === 0 ? colRaw : boardCols - 1 - colRaw;
+
+        const x = startX + col * (tileWidth + gap);
+        const y = startY + row * (tileHeight + gap);
+
+        return { x, y };
+      }
+
       function renderBoard() {
         board.innerHTML = "";
 
-        for (let index = 0; index < count; index++) {
+        for (let index = 0; index < boardCount; index++) {
           const tile = document.createElement("div");
           tile.className = "tile";
-          tile.style.background = boardColors[index];
-          tile.style.left = `${tilePositions[index].x}px`;
-          tile.style.top = `${tilePositions[index].y}px`;
 
-          if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
-            tile.classList.add("active");
+          const pos = getTilePosition(index);
+
+          tile.style.left = `${pos.x}px`;
+          tile.style.top = `${pos.y}px`;
+
+          if (index === 0) {
+            tile.classList.add("special-room", "start-room");
+            tile.innerHTML = `
+              <div class="tile-content">
+                <small>Start</small>
+                <strong>Leerer Konferenzraum</strong>
+              </div>
+            `;
+          } else if (index === boardCount - 1) {
+            tile.classList.add("special-room", "end-room");
+            tile.innerHTML = `
+              <div class="tile-content">
+                <small>Ende</small>
+                <strong>Gesprächsrunde</strong>
+                <div class="room-people">
+                  <span class="room-person"></span>
+                  <span class="room-person"></span>
+                  <span class="room-person"></span>
+                  <span class="room-person"></span>
+                </div>
+              </div>
+            `;
+          } else {
+            tile.style.background = boardColors[index];
+            if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
+              tile.classList.add("active");
+            }
+
+            const tokens = players
+              .filter((player) => player.position === index)
+              .map((player, tokenIndex) => {
+                const allOnTile = players.filter((p) => p.position === index).length;
+                const offset = allOnTile > 1 ? tokenIndex * 12 - ((allOnTile - 1) * 12) / 2 : 0;
+                const token = document.createElement("div");
+                token.className = "token";
+                token.style.background = player.color;
+                token.style.setProperty("--offset", `${offset}px`);
+                token.textContent = player.id;
+                return token.outerHTML;
+              })
+              .join("");
+
+            tile.innerHTML = `
+              <div class="tile-content">
+                <small>Schritt</small>
+                <strong>${getTileLabel(index)}</strong>
+              </div>
+              <div class="tokens">${tokens}</div>
+            `;
           }
-
-          const tokens = players
-            .filter((player) => player.position === index)
-            .map((player, tokenIndex) => {
-              const allOnTile = players.filter((p) => p.position === index).length;
-              const offset = allOnTile > 1 ? tokenIndex * 12 - ((allOnTile - 1) * 12) / 2 : 0;
-              const token = document.createElement("div");
-              token.className = "token";
-              token.style.background = player.color;
-              token.style.setProperty("--offset", `${offset}px`);
-              token.textContent = player.id;
-              return token.outerHTML;
-            })
-            .join("");
-
-          tile.innerHTML = `
-            <div class="tile-content">
-              <small>${index === 0 ? "Start" : index === count - 1 ? "Ziel" : "Schritt"}</small>
-              <strong>${boardLabels[index]}</strong>
-            </div>
-            <div class="tokens">${tokens}</div>
-          `;
 
           board.appendChild(tile);
         }
@@ -894,12 +975,12 @@
         if (!player) return;
 
         const result = Math.floor(Math.random() * 6) + 1;
-        const targetPosition = Math.min(player.position + result, count - 1);
+        const targetPosition = Math.min(player.position + result, boardCount - 1);
         player.position = targetPosition;
 
         diceDisplay.textContent = `Würfel: ${result}`;
 
-        if (targetPosition >= count - 1) {
+        if (targetPosition >= boardCount - 1) {
           statusText.textContent = `${player.name} hat das Ziel erreicht!`;
         } else {
           statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
