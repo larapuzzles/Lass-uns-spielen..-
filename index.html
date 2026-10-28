@@ -1,258 +1,194 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Digitales Lernspiel-Brett</title>
-  <style>
-    :root {
-      --board-cols: 8;
-      --board-rows: 8;
-      --tile-size: 62px;
-      --gap: 8px;
-      --bg-dark: #0f172a;
-      --bg-panel: #111827;
-      --panel: #1f2937;
-      --panel-alt: #374151;
-      --text: #e5eefb;
-      --muted: #b7c3d9;
-      --accent: #60a5fa;
-      --shadow: rgba(15, 23, 42, 0.32);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background:
-        radial-gradient(circle at top, rgba(96, 165, 250, 0.25), transparent 40%),
-        linear-gradient(135deg, #0b1120, #111827 50%, #0f172a);
-      color: var(--text);
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    .app {
-      background: rgba(17, 24, 39, 0.92);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 18px 40px var(--shadow);
-      width: min(92vw, 760px);
-    }
-
-    .title-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.4rem, 3vw, 2.2rem);
-      letter-spacing: 0.04em;
-    }
-
-    .badge {
-      background: rgba(96, 165, 250, 0.15);
-      color: #dfeeff;
-      border: 1px solid rgba(96, 165, 250, 0.35);
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-    }
-
-    .game-layout {
-      display: grid;
-      grid-template-columns: minmax(260px, auto) minmax(200px, 260px);
-      gap: 22px;
-      align-items: start;
-    }
-
-    .board-panel {
-      background: rgba(31, 41, 55, 0.85);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 16px;
-    }
-
-    .board {
-      display: grid;
-      grid-template-columns: repeat(var(--board-cols), var(--tile-size));
-      grid-template-rows: repeat(var(--board-rows), var(--tile-size));
-      gap: var(--gap);
-      background: rgba(15, 23, 42, 0.7);
-      border-radius: 16px;
-      padding: 12px;
-      width: max-content;
-    }
-
-    .tile {
-      position: relative;
-      width: var(--tile-size);
-      height: var(--tile-size);
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      background: var(--tile-color, #64748b);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.25),
-        0 5px 12px rgba(0,0,0,0.12);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-      outline: none;
-    }
-
-    .tile:hover {
-      transform: translateY(-2px) scale(1.03);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.28),
-        0 8px 18px rgba(0,0,0,0.18);
-    }
-
-    .tile:focus-visible {
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.8), 0 0 0 6px rgba(96,165,250,0.45);
-    }
-
-    .tile.selected {
-      outline: 3px solid rgba(255,255,255,0.85);
-      outline-offset: 2px;
-      filter: brightness(1.1);
-    }
-
-    .tile::after {
-      content: "";
-      position: absolute;
-      inset: 8px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      pointer-events: none;
-    }
-
-    .info-panel {
-      background: rgba(31, 41, 55, 0.8);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px;
-    }
-
-    .info-panel h2 {
-      margin: 0 0 12px;
-      font-size: 1.1rem;
-    }
-
-    .tile-card {
-      background: rgba(17, 24, 39, 0.9);
-      border-radius: 14px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      margin-bottom: 16px;
-    }
-
-    .tile-preview {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 12px;
-      border: 2px solid rgba(255,255,255,0.18);
-      background: var(--preview-color, #64748b);
-    }
-
-    .tile-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      line-height: 1.4;
-    }
-
-    .meta {
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.6;
-    }
-
-    .legend {
-      margin-top: 14px;
-      display: grid;
-      gap: 10px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .legend-swatch {
-      width: 16px;
-      height: 16px;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.14);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.22);
-      display: inline-block;
-    }
-
-    @media (max-width: 700px) {
-      .game-layout {
-        grid-template-columns: 1fr;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Digitales Lernspielbrett</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --panel: #ffffff;
+        --border: #d8e0ec;
+        --text: #1f2937;
+        --shadow: rgba(0, 0, 0, 0.08);
       }
 
-      .board-panel {
-        overflow-x: auto;
+      * {
+        box-sizing: border-box;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <div class="title-bar">
-      <h1>Spielbrett</h1>
-      <div class="badge">Lernspiel</div>
-    </div>
 
-    <div class="game-layout">
-      <div class="board-panel">
-        <div id="board" class="board" aria-label="Spieldarstellung"></div>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #eaf3ff, #f5f8ff);
+        color: var(--text);
+      }
+
+      .app {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: 0 18px 35px var(--shadow);
+        padding: 20px;
+        width: min(90vw, 720px);
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .legend {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        background: #f3f6fb;
+        border: 1px solid #dfe7f2;
+        border-radius: 999px;
+        padding: 6px 10px;
+      }
+
+      .dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(70px, 1fr));
+        gap: 10px;
+        background: #ebf0f7;
+        border-radius: 18px;
+        padding: 10px;
+      }
+
+      .tile {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        border-radius: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        user-select: none;
+        overflow: hidden;
+      }
+
+      .tile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      }
+
+      .tile span {
+        font-weight: 700;
+        font-size: clamp(0.65rem, 1vw, 0.95rem);
+        color: rgba(0, 0, 0, 0.7);
+        text-align: center;
+        padding: 6px;
+      }
+
+      .tile .marker {
+        position: absolute;
+        bottom: 7px;
+        right: 7px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .tile.active {
+        outline: 4px solid #111827;
+        outline-offset: -4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="header">
+        <h1>Spielbrett</h1>
+        <div class="legend" id="legend"></div>
       </div>
 
-      <aside class="info-panel">
-        <h2>Feld-Details</h2>
-
-        <div class="tile-card">
-          <div style="display:flex; align-items:center;">
-            <span id="preview" class="tile-preview"></span>
-            <div>
-              <div id="tileName" class="tile-name">Wähle ein Feld</div>
-            </div>
-          </div>
-          <div id="tileMeta" class="meta" style="margin-top: 12px;">
-            Klicke auf ein Feld, um Informationen zu sehen.
-          </div>
-        </div>
-
-        <div class="legend" id="legend"></div>
-      </aside>
+      <div class="board" id="board"></div>
     </div>
-  </div>
 
-  <script>
-    const boardEl = document.getElementById("board");
-    const tileNameEl = document.getElementById("tileName");
-    const tileMetaEl = document.getElementById("tileMeta");
-    const previewEl = document.getElementById("preview");
-    const legendEl = document.getElementById("legend");
+    <script>
+      const board = document.getElementById("board");
+      const legend = document.getElementById("legend");
 
-    const tileTypes = [
-      { name: "](#)*
+      const fieldTypes = [
+        { name: "Start", color: "#f9d75d", label: "Start" },
+        { name: "Mathe", color: "#6ec6ff", label: "1+1" },
+        { name: "Sprache", color: "#ff9b8a", label: "Wort" },
+        { name: "Natur", color: "#7adf9c", label: "Pflanze" },
+        { name: "Technik", color: "#b38bff", label: "Code" },
+        { name: "Kreativ", color: "#ffbf69", label: "Kunst" },
+        { name: "Bonus", color: "#9fe4d8", label: "Bonus" },
+        { name: "Ziel", color: "#f7a8d8", label: "Ziel" }
+      ];
+
+      // Legende erzeugen
+      fieldTypes.forEach(type => {
+        const item = document.createElement("div");
+        item.className = "legend-item";
+        item.innerHTML = `
+          <span class="dot" style="background:${type.color}"></span>
+          <span>${type.name}</span>
+        `;
+        legend.appendChild(item);
+      });
+
+      // 6x6 Spielbrett erstellen
+      const size = 6;
+      let currentIndex = 0;
+
+      for (let i = 0; i < size * size; i++) {
+        const tile = document.createElement("div");
+        const type = fieldTypes[i % fieldTypes.length];
+
+        tile.className = "tile";
+        tile.style.background = type.color;
+        tile.innerHTML = `
+          <span>${type.label}</span>
+          <div class="marker"></div>
+        `;
+
+        // Aktives Feld markiert
+        if (i === currentIndex) {
+          tile.classList.add("active");
+        }
+
+        tile.addEventListener("click", () => {
+          document.querySelectorAll(".tile").forEach(cell => cell.classList.remove("active"));
+          tile.classList.add("active");
+          currentIndex = i;
+        });
+
+        board.appendChild(tile);
+      }
+    </script>
+  </body>
+</html>
