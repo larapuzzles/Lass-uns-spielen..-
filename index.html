@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Career Board – Straßenweg im Unternehmen</title>
+    <title>Premium Career Board – Pfad-Layout</title>
     <style>
       :root {
         --bg: #eef3fb;
@@ -18,11 +18,6 @@
         --yellow: #d9a92a;
         --green: #2f9e6f;
         --red: #d84d4d;
-
-        --blue-soft: #dfeeff;
-        --yellow-soft: #fff3d4;
-        --green-soft: #dff5e8;
-        --red-soft: #ffe0e0;
 
         --primary: #183d63;
         --dark: #1d2430;
@@ -212,12 +207,6 @@
         font-size: 0.48rem;
         letter-spacing: 0.07em;
         text-transform: uppercase;
-      }
-
-      .special-room {
-        background:
-          linear-gradient(135deg, rgba(255,255,255,0.55), rgba(255,255,255,0.15)),
-          linear-gradient(135deg, #edf3fb, #dfeaf7);
       }
 
       .start-room {
@@ -721,14 +710,50 @@
       ];
 
       const palette = ["#2f6fcb", "#d9a92a", "#2f9e6f", "#d84d4d"];
-      const boardCols = 4;
-      const boardRows = 6;
-      const boardCount = boardCols * boardRows;
-      const tileWidth = 114;
-      const tileHeight = 114;
-      const gap = 20;
+
+      const rowPatterns = [
+        ["blue", "yellow", "green", "red"],
+        ["green", "red", "blue", "yellow"],
+        ["blue", "yellow", "green", "red"],
+        ["green", "red", "blue", "yellow"],
+        ["blue", "yellow", "green", "red"],
+        ["green", "red", "blue", "yellow"]
+      ];
+
+      const boardCount = 24;
+      const tileWidth = 118;
+      const tileHeight = 118;
+      const gapX = 20;
+      const gapY = 20;
       const startX = 60;
       const startY = 60;
+
+      function getGridCoords(index) {
+        const row = Math.floor(index / 4);
+        const col = row % 2 === 0 ? index % 4 : 3 - (index % 4);
+        return { row, col };
+      }
+
+      function getTileColor(index) {
+        const { row, col } = getGridCoords(index);
+        const colorName = rowPatterns[row][col];
+        if (colorName === "blue") return "#2f6fcb";
+        if (colorName === "yellow") return "#d9a92a";
+        if (colorName === "green") return "#2f9e6f";
+        if (colorName === "red") return "#d84d4d";
+        return "#ffffff";
+      }
+
+      function getTilePosition(index) {
+        const row = Math.floor(index / 4);
+        const colRaw = index % 4;
+        const col = row % 2 === 0 ? colRaw : 3 - colRaw;
+
+        const x = startX + col * (tileWidth + gapX);
+        const y = startY + row * (tileHeight + gapY);
+
+        return { x, y };
+      }
 
       function shuffle(array) {
         const copy = [...array];
@@ -738,65 +763,6 @@
         }
         return copy;
       }
-
-      function getCell(index) {
-        const row = Math.floor(index / boardCols);
-        const colRaw = index % boardCols;
-        const col = row % 2 === 0 ? colRaw : boardCols - 1 - colRaw;
-        return { row, col };
-      }
-
-      function isValidColor(index, color) {
-        const { row, col } = getCell(index);
-
-        const leftIndex = row * boardCols + (col - 1);
-        const upperIndex = (row - 1) * boardCols + col;
-
-        if (col > 0 && row % 2 === 0 && boardColors[leftIndex] === color) return false;
-        if (col > 0 && row % 2 === 1 && boardColors[(row * boardCols) + (col + 1)] === color) return false;
-
-        if (row > 0) {
-          const upperCell = getCell((row - 1) * boardCols + (row % 2 === 0 ? col : (boardCols - 1 - col)));
-          const upperIndexActual = upperCell.row * boardCols + upperCell.col;
-          if (boardColors[upperIndexActual] === color) return false;
-        }
-
-        return true;
-      }
-
-      function generateBoardColors() {
-        const colors = Array(boardCount).fill(null);
-
-        function backtrack(index) {
-          if (index >= boardCount) return true;
-
-          const options = shuffle([...palette]);
-
-          for (const color of options) {
-            if (index === 0 || index === boardCount - 1) {
-              if (backtrack(index + 1)) return true;
-              continue;
-            }
-
-            if (isValidColor(index, color)) {
-              colors[index] = color;
-              if (backtrack(index + 1)) return true;
-              colors[index] = null;
-            }
-          }
-          return false;
-        }
-
-        backtrack(0);
-
-        // Start and end are special rooms and not part of color randomness
-        colors[0] = null;
-        colors[boardCount - 1] = null;
-
-        return colors;
-      }
-
-      const boardColors = generateBoardColors();
 
       let players = [];
       let currentPlayerIndex = 0;
@@ -874,29 +840,6 @@
         });
       }
 
-      function getTileLabel(index) {
-        const labels = [
-          "Bewerbung", "Portfolio", "Kontakt", "Screening",
-          "CV Check", "Telefon", "Vorstellung", "Assessment",
-          "Case", "Perspektive", "Fitcheck", "Interview",
-          "Feedback", "Offer", "Vertrag", "Onboarding",
-          "Team", "Führung", "Start", "Mission",
-          "Zielbild", "Eintritt", "Integration", "Erfolg"
-        ];
-        return labels[index];
-      }
-
-      function getTilePosition(index) {
-        const row = Math.floor(index / boardCols);
-        const colRaw = index % boardCols;
-        const col = row % 2 === 0 ? colRaw : boardCols - 1 - colRaw;
-
-        const x = startX + col * (tileWidth + gap);
-        const y = startY + row * (tileHeight + gap);
-
-        return { x, y };
-      }
-
       function renderBoard() {
         board.innerHTML = "";
 
@@ -905,12 +848,11 @@
           tile.className = "tile";
 
           const pos = getTilePosition(index);
-
           tile.style.left = `${pos.x}px`;
           tile.style.top = `${pos.y}px`;
 
           if (index === 0) {
-            tile.classList.add("special-room", "start-room");
+            tile.classList.add("start-room");
             tile.innerHTML = `
               <div class="tile-content">
                 <small>Start</small>
@@ -918,7 +860,7 @@
               </div>
             `;
           } else if (index === boardCount - 1) {
-            tile.classList.add("special-room", "end-room");
+            tile.classList.add("end-room");
             tile.innerHTML = `
               <div class="tile-content">
                 <small>Ende</small>
@@ -932,16 +874,18 @@
               </div>
             `;
           } else {
-            tile.style.background = boardColors[index];
+            tile.style.background = getTileColor(index);
             if (players[currentPlayerIndex] && players[currentPlayerIndex].position === index) {
               tile.classList.add("active");
             }
 
             const tokens = players
               .filter((player) => player.position === index)
-              .map((player, tokenIndex) => {
+              .map((player) => {
                 const allOnTile = players.filter((p) => p.position === index).length;
-                const offset = allOnTile > 1 ? tokenIndex * 12 - ((allOnTile - 1) * 12) / 2 : 0;
+                const indexInTile = players.filter((p) => p.position === index).indexOf(player);
+                const offset = allOnTile > 1 ? indexInTile * 12 - ((allOnTile - 1) * 12) / 2 : 0;
+
                 const token = document.createElement("div");
                 token.className = "token";
                 token.style.background = player.color;
@@ -954,7 +898,7 @@
             tile.innerHTML = `
               <div class="tile-content">
                 <small>Schritt</small>
-                <strong>${getTileLabel(index)}</strong>
+                <strong>${index + 1}</strong>
               </div>
               <div class="tokens">${tokens}</div>
             `;
