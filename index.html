@@ -653,7 +653,7 @@
       }
 
       function getCategoryForIndex(index) {
-        if (index === 0 || index === boardCount - 1) return null;
+        if (index <= 0 || index >= boardCount - 1) return null;
         const color = getTileColor(index);
         return categoryByColor[color] || null;
       }
@@ -666,7 +666,10 @@
       };
 
       function drawCardForCategory(categoryName) {
-        if (!categoryName) return;
+        if (!categoryName) {
+          statusText.textContent = "Auf Start oder Ende gibt es keine Kategorie-Karte.";
+          return;
+        }
 
         let deckForCategory = categoryDecks[categoryName];
         if (!deckForCategory || deckForCategory.length === 0) {
@@ -679,11 +682,11 @@
 
         currentCard = card;
         showCard(card);
+        statusText.textContent = `${getActivePlayer().name} zieht eine ${categoryConfig[categoryName].label}-Karte.`;
       }
 
       function showCard(card) {
         if (!card) return;
-
         const cfg = categoryConfig[card.category];
         cardBadge.textContent = cfg.label;
         cardBadge.style.background = cfg.soft;
@@ -755,7 +758,6 @@
           position: 0
         }));
         currentPlayerIndex = 0;
-        currentCard = null;
         resetCardPanel();
         stopTimer();
         statusText.textContent = `${players[0].name} ist am Zug`;
@@ -872,12 +874,6 @@
           statusText.textContent = `${player.name} zieht ${result} Felder und steht nun auf Feld ${targetPosition + 1}`;
         }
 
-        const categoryName = getCategoryForIndex(targetPosition);
-        if (categoryName) {
-          drawCardForCategory(categoryName);
-          statusText.textContent = `${player.name} landet auf einem ${categoryConfig[categoryName].label} Feld und zieht eine passende Karte.`;
-        }
-
         renderBoard();
       }
 
@@ -895,19 +891,15 @@
         const player = getActivePlayer();
         if (!player) return;
 
-        const allCards = shuffle(deck);
-        const card = allCards[0];
+        const currentFieldCategory = getCategoryForIndex(player.position);
 
-        if (!card) {
+        if (!currentFieldCategory) {
+          statusText.textContent = `${player.name} steht auf Start oder Ende. Dort gibt es keine Karten.`;
           resetCardPanel();
           return;
         }
 
-        currentCard = card;
-        showCard(card);
-
-        statusText.textContent = `${player.name} zieht eine zufällige Karte: ${card.title}`;
-        renderBoard();
+        drawCardForCategory(currentFieldCategory);
       }
 
       function formatTime(ms) {
